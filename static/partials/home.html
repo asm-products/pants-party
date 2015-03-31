@@ -1,0 +1,30 @@
+<topheader></topheader>
+
+<div ng-hide="isAuthenticated();">
+    <teaser></teaser>
+</div>
+
+<section id="body" class="page-section">
+    <div class="wrap container-fluid" >
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <h1>Recent Jokes</h1>
+                <div ng-repeat="joke in jokes">
+                    <joke joke="joke"></joke>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="row">
+                    <div class="col-lg-12 ">
+                        <h1>Images</h1>
+                        <span ng-repeat="image in images">
+                            <div class="col-md-5 col-sm-5 col-xs-12" style="margin: 5px; height: 280px; background: center url('{{ image.image }}');">&nbsp;</div>
+                        <span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<bottomfooter></bottomfooter>

@@ -1,0 +1,45 @@
+<div>
+    <div class="row jokeList">
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 text-right">
+            <img class="img-responsive img-thumbnail img-circle" 
+                ng-src="{{ joke.user.avatar }}" />
+        </div>
+        <div class="col-lg-10 col-md-10 col-sm-10 col-xs-9">
+            <div class="arrow-panel arrow-left col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <span>{{ joke.text }}</span>
+                <a class="right btn btn-xs btn-info" 
+                    ng-click="togglePunchlineSubmit(joke.id);"><span class="glyphicon glyphicon-plus" style="font-size: 9pt;"></span></a>
+            </div>
+            <p> 
+                <a ui-sref="profile({ profileId: joke.user.id })">{{ joke.user.username }}</a>
+                <!--span class="category-article">in</span-->
+                <span class="category">{{ joke.category }}</span>
+                <span class="right small">{{ joke.punchlines.length }} punchlines &middot; 
+                <span am-time-ago="joke.created"></span></span>
+            </p>
+        </div>
+    </div>
+    <div class="row jokeList reply" ng-show="plActive==joke.id">
+        <div class="col-lg-offset-2 col-lg-10">
+            <form ng-submit="submitPunchline(this, joke.id);">
+                <input ng-model="punchlineModel.text" />
+            </form>
+        </div>
+    </div>
+    <div ng-repeat="punchline in joke.punchlines">
+        <div class="row jokeList reply">
+            <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-3 col-lg-2 col-md-2 col-sm-2 col-xs-3 text-right">
+                <img class="img-responsive img-thumbnail img-circle" ng-src="{{ punchline.user.avatar }}" />
+            </div>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6">
+                <div class="arrow-panel arrow-left col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    {{ punchline.text }}
+                </div>
+                <p> 
+                    {{ punchline.user.username }}
+                    <span class="right small"><span am-time-ago="joke.created"></span></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

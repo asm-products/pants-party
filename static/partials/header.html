@@ -1,0 +1,22 @@
+<section id="header" class="page-section">
+    <div class="wrap container-fluid">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-xs-12">
+                <a ui-sref="home"><img id="logo" ng-src="/static/images/logo.png" /></a>
+            </div>
+            <div id="nav" class="col-lg-6 col-md-6 col-xs-12 last-lg last-md" ng-controller="NavCtrl">
+                <ul>
+                    <li><a ui-sref="home">Home</a></li>
+                    <li><a ui-sref="jokes">Jokes</a></li>
+                    <span ng-hide="isAuthenticated()">
+                        <li class="login-link"><a class="login-link" ui-sref="login">Login</a></li>
+                    </span>
+                    <span ng-hide="!isAuthenticated()">
+                        <li><a href="javascript:;" ng-click="logout();">Log Out</a></li>
+                    </span>
+                    <li>{{ isAuthenticated }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
