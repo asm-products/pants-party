@@ -70,8 +70,7 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
         });
 
         $authProvider.twitter({
-            url: '/test/',
-            // clientId: 'c2WJqCMkG9M39bZcas5cid1ms',
+            url: '/auth/twitter/',
         });
 
         $urlRouterProvider.otherwise('/');
