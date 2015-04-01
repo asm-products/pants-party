@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from urlparse import parse_qs, parse_qsl
@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from models import SocialUser
 from requests_oauthlib import OAuth1
 from django.conf import settings
+from urllib import urlencode
 
 def test(request):
     return HttpResponse("This method should not exist.")
@@ -30,7 +31,9 @@ def facebook(request):
     access_token        = dict(parse_qsl(r.text))
 
     r                   = requests.get(graph_api_url, params=access_token)
+    print r.text
     profile             = json.loads(r.text)
+    print profile
     provider            = "facebook"
     uid                 = profile["id"]
     display_name        = profile["username"]
@@ -73,34 +76,59 @@ def twitter(request):
     access_token_url    = 'https://api.twitter.com/oauth/access_token'
     authenticate_url    = 'https://api.twitter.com/oauth/authenticate'
 
+    consumer_key        = settings.SOSH["twitter"][0]["CONSUMER_KEY"]
+    consumer_secret     = settings.SOSH["twitter"][1]["CONSUMER_SECRET"]
+    callback            = settings.SOSH["twitter"][2]["CALLBACK_URL"]
+
     if request.GET.get('oauth_token') and request.GET.get('oauth_verifier'):
-        auth = OAuth1(app.config['TWITTER_CONSUMER_KEY'],
-                      client_secret=app.config['TWITTER_CONSUMER_SECRET'],
-                      resource_owner_key=request.args.get('oauth_token'),
-                      verifier=request.args.get('oauth_verifier'))
+    # if request.GET.get('oauth_token'):
+        auth = OAuth1(consumer_key, consumer_secret, request.GET.get("oauth_token"), verifier=request.GET.get("oauth_verifier"))
+        # verifier=request.args.get('oauth_verifier'))
         r = requests.post(access_token_url, auth=auth)
+        print r.text
         profile = dict(parse_qsl(r.text))
+        print "Profile"
+        print profile
+        print "/Profile"
 
-        user = User.query.filter_by(twitter=profile['user_id']).first()
-        if user:
-            token = create_token(user)
-            return jsonify(token=token)
-        u = User(twitter=profile['user_id'],
-                 display_name=profile['screen_name'])
-        db.session.add(u)
-        db.session.commit()
-        token = create_token(u)
-        return jsonify(token=token)
+        # profile             = json.loads(r.text)
+        provider            = "twitter"
+        uid                 = profile["user_id"]
+        display_name        = profile["screen_name"]
+        username            = "%s.%s" % (provider, uid)
+
+        try:
+            social_user                 = SocialUser.objects.get(uid=uid, provider="twitter")
+            social_user.access_token    = "Twitter"
+            social_user.extra_data      = profile
+            social_user.save()
+            token                       = Token.objects.get(user=social_user.user)
+            key                         = token.key
+        except SocialUser.DoesNotExist, e:
+            user , created = get_user_model().objects.get_or_create(username=username, display_name=display_name)
+            if created:
+                token   = Token(user=user)
+                key     = token.generate_key()
+                token.save()
+            else:
+                token   = Token.objects.get(user=user)
+                key     = token.key
+
+            social_user, created = SocialUser.objects.get_or_create(provider="twitter", user=user, uid=uid)
+            if created:
+                social_user.display_name        = display_name
+                social_user.access_token        = "Twitter"
+                social_user.extra_data          = profile
+                social_user.save()
+        output = {}
+        output["key"] = token.key
+        return HttpResponse(json.dumps(output))
     else:
-        consumer_key        = settings.SOSH["twitter"][0]["CONSUMER_KEY"]
-        consumer_secret     = settings.SOSH["twitter"][1]["CONSUMER_SECRET"]
-        callback            = settings.SOSH["twitter"][2]["CALLBACK_URL"]
-
         oauth = OAuth1(consumer_key, client_secret=consumer_secret, callback_uri=callback)
         r = requests.post(request_token_url, auth=oauth)
         oauth_token = dict(parse_qsl(r.text))
         print oauth_token
         qs = urlencode(dict(oauth_token=oauth_token['oauth_token']))
         print qs
-        # return redirect(authenticate_url + '?' + qs)
-
+        # return redirect("/auth/twitter/?%s" % (qs))
+        return redirect("%s?%s" % (authenticate_url, qs))
