@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from views import FacebookLogin, TwitterLogin, UserList, UserDetail
 from textjokes.views import JokeList, PunchlineList, JokeDetail, api_root
-from sosh.views import test, facebook
+from sosh.views import test, facebook, twitter
 
 urlpatterns = patterns("",
     # Examples:
@@ -21,4 +21,5 @@ urlpatterns = patterns("",
     url(r"^api/users/(?P<pk>[0-9]+)/$",         UserDetail.as_view()),
     url(r"^test/$",                             test),
     url(r"^auth/facebook/$",                    facebook),
+    url(r"^auth/twitter/$",                     twitter),
 )
