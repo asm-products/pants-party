@@ -20,10 +20,12 @@ def facebook(request):
     access_token_url    = 'https://graph.facebook.com/oauth/access_token'
     graph_api_url       = 'https://graph.facebook.com/me'
 
+    client_secret       = settings.SOSH["facebook"]["CLIENT_SECRET"]
+
     params  = {
         "client_id"     : "%s" % (data["clientId"]),
         "redirect_uri"  : "%s" % (data["redirectUri"]),
-        "client_secret" : "b410121bb6223830fb963eb7ae403875",
+        "client_secret" : client_secret,
         "code"          : "%s" % (data["code"]),
     }
 
@@ -76,9 +78,9 @@ def twitter(request):
     access_token_url    = 'https://api.twitter.com/oauth/access_token'
     authenticate_url    = 'https://api.twitter.com/oauth/authenticate'
 
-    consumer_key        = settings.SOSH["twitter"][0]["CONSUMER_KEY"]
-    consumer_secret     = settings.SOSH["twitter"][1]["CONSUMER_SECRET"]
-    callback            = settings.SOSH["twitter"][2]["CALLBACK_URL"]
+    consumer_key        = settings.SOSH["twitter"]["CONSUMER_KEY"]
+    consumer_secret     = settings.SOSH["twitter"]["CONSUMER_SECRET"]
+    callback            = settings.SOSH["twitter"]["CALLBACK_URL"]
 
     if request.GET.get('oauth_token') and request.GET.get('oauth_verifier'):
     # if request.GET.get('oauth_token'):
