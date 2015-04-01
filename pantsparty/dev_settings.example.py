@@ -1,10 +1,13 @@
-SOSH = {
-    "twitter" : [ 
-        {"CONSUMER_KEY"     : ""},
-        {"CONSUMER_SECRET"  : ""},
-        {"CALLBACK_URL"     : "http://pants.party/auth/twitter/"},
-    ]   
-}  
+SOSH = { 
+    "twitter" : { 
+        "CONSUMER_KEY"     : "",
+        "CONSUMER_SECRET"  : "",
+        "CALLBACK_URL"     : "http://pants.party/auth/twitter/"
+    },  
+    "facebook" : { 
+        "CLIENT_SECRET"    : ""
+    }   
+}
 
 DATABASES = {
     'default': {
