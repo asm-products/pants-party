@@ -1,3 +1,11 @@
+SOSH = {
+    "twitter" : [ 
+        {"CONSUMER_KEY"     : ""},
+        {"CONSUMER_SECRET"  : ""},
+        {"CALLBACK_URL"     : "http://pants.party/auth/twitter/"},
+    ]   
+}  
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
