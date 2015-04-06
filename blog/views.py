@@ -19,8 +19,6 @@ class BlogPostList(BlogMixin, generics.ListCreateAPIView):
     queryset                = BlogPost.objects.all()
     serializer_class        = BlogPostSerializer
     authentication_classes  = (TokenAuthentication, )
-    lookup_field            = "slug"
-    lookup_url_kwarg        = "slug"
 
 class BlogPostDetail(generics.RetrieveAPIView):
     queryset = BlogPost.objects.all()

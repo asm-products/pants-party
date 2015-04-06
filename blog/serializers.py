@@ -4,7 +4,7 @@ from ppuser.serializers import UserSerializer
 from models import BlogPost
 from django.conf import settings
 
-class BlogPostSerializer(serializers.ModelSerializer):
+class BlogPostSerializer(serializers.HyperlinkedModelSerializer):
     author = UserSerializer(read_only=True, many=False)
 
     def perform_create(self, serializer):
@@ -18,4 +18,4 @@ class BlogPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BlogPost
-        fields = ('id', 'author', 'title', 'slug', 'created', 'header_img', )
+        fields = ('id', 'author', 'title', 'slug', 'created', 'body', 'header_img', )

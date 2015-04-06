@@ -1,4 +1,4 @@
-angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMoment', ])
+angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMoment', 'ngSanitize', 'btford.markdown', ])
 
     .config(function($stateProvider, $urlRouterProvider, $locationProvider, $authProvider) {
         $stateProvider
@@ -6,6 +6,16 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                 url: '/',
                 templateUrl: '/static/partials/home.html',
                 controller: 'HomeCtrl',
+            })
+            .state('blog', {
+                url: '/blog',
+                templateUrl: '/static/partials/blogs.html',
+                controller: 'BlogCtrl',
+            })
+            .state('blog-detail', {
+                url: '/blog/:slug',
+                templateUrl: '/static/partials/blog.html',
+                controller: 'BlogDetailCtrl',
             })
             .state('faq', {
                 url: '/faq',
@@ -22,10 +32,6 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
             .state('about', {
                 url: '/about',
                 templateUrl: '/static/partials/about.html',
-            })
-            .state('blog', {
-                url: '/blog',
-                templateUrl: '/static/partials/blog.html',
             })
             .state('team', {
                 url: '/team',

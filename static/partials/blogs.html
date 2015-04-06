@@ -4,9 +4,11 @@
     <div class="wrap container-fluid" >
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h1>{{ post.title }}</h1>
+                <h1>Pants.Party post</h1>
                 <hr />
-                <div btf-markdown="post.body"></div>
+                <div ng-repeat="post in posts">
+                    <h3><a ui-sref="blog-detail({ slug: post.slug })">{{ post.title }}</a></h3>
+                </div>
             </div>
         </div>
     </div>
