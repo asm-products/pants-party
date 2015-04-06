@@ -72,11 +72,12 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.persona',
     'allauth.socialaccount.providers.twitter',
 
-    'textjokes',
-    'ppuser',
+    'blog',
     'corsheaders',
-    # 'testresp',
+    'ppuser',
     'sosh',
+    'textjokes',
+    # 'testresp',
 )
 
 REST_FRAMEWORK = {
