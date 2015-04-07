@@ -5,6 +5,7 @@
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h1>{{ post.title }}</h1>
+                <h4 class="subheader"><span am-time-ago="post.created"></span> by {{ post.author.username }}</h4>
                 <hr />
                 <div btf-markdown="post.body"></div>
             </div>
