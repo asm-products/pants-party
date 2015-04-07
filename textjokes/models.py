@@ -10,6 +10,10 @@ class TextJoke(models.Model):
     responses       = models.IntegerField(default=0)
     score           = models.IntegerField(default=1)
     
+    @property
+    def user_has_voted(self):
+        return False
+
     class Meta:
         ordering = ['-id']
 
@@ -43,3 +47,11 @@ class TextPunchline(models.Model):
 
         super(TextPunchline, self).save(*args, **kwargs)
 
+class JokeVotes(models.Model):
+    user            = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_votes')
+    joke            = models.ForeignKey(TextJoke, null=False, blank=False, related_name='joke_votes')
+    vote            = models.IntegerField(default=0)
+    ip_address      = models.IPAddressField(null=True, blank=True)
+
+    def __unicode__(self):
+        return "%s : %s" % (self.user.username, self.vote)

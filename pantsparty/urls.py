@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from views import FacebookLogin, TwitterLogin, UserList, UserDetail
-from textjokes.views import JokeList, PunchlineList, JokeDetail, api_root
+from textjokes.views import JokeList, PunchlineList, JokeDetail, JokeVoteList, api_root
 from blog.views import BlogPostList, BlogPostDetail
 from sosh.views import test, facebook, google, twitter
 
@@ -18,6 +18,7 @@ urlpatterns = patterns("",
     url(r"^api/punchlines/$",                   PunchlineList.as_view(),                    name="punchline-list"),
     url(r"^api/jokes/$",                        JokeList.as_view(),                         name="joke-list"),
     url(r"^api/jokes/(?P<pk>[0-9]+)/$",         JokeDetail.as_view(),                       name="joke-detail"),
+    url(r"^api/votes/$",                        JokeVoteList.as_view(),                     name="joke-votes"),
     url(r"^api/users/$",                        UserList.as_view(),                         name="user-list"),
     url(r"^api/users/$",                        UserList.as_view(),                         name="user-list"),
     url(r"^api/users/(?P<pk>[0-9]+)/$",         UserDetail.as_view()),
