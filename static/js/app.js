@@ -79,6 +79,22 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
             url: '/auth/twitter/',
         });
 
+        $authProvider.google({
+            clientId: "619194941129-08kmjd2nbt526kqmdhc5sgtkt669j2cg.apps.googleusercontent.com",
+            redirectUri: "http://pants.party/auth/google/",
+            url: '/auth/google/'
+        });
+
+        $authProvider.oauth2({
+            name: 'reddit',
+            url: '/auth/reddit',
+            redirectUri: 'http://pants.party/auth/reddit/',
+            scope: 'identity',
+            defaultUrlParams: ['response_type', 'client_id', 'redirect_uri', 'state', ],
+            clientId: '49kdmpOB_TXs8Q',
+            authorizationEndpoint: 'https://ssl.reddit.com/api/v1/authorize',
+        });
+
         $urlRouterProvider.otherwise('/');
         $locationProvider.html5Mode({
             hashPrefix: '!',

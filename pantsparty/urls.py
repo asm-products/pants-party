@@ -3,7 +3,7 @@ from django.contrib import admin
 from views import FacebookLogin, TwitterLogin, UserList, UserDetail
 from textjokes.views import JokeList, PunchlineList, JokeDetail, api_root
 from blog.views import BlogPostList, BlogPostDetail
-from sosh.views import test, facebook, twitter
+from sosh.views import test, facebook, google, twitter
 
 urlpatterns = patterns("",
     # Examples:
@@ -23,6 +23,7 @@ urlpatterns = patterns("",
     url(r"^api/users/(?P<pk>[0-9]+)/$",         UserDetail.as_view()),
     url(r"^test/$",                             test),
     url(r"^auth/facebook/$",                    facebook),
+    url(r"^auth/google/$",                      google),
     url(r"^auth/twitter/$",                     twitter),
     url(r"^api/blogs/$",                        BlogPostList.as_view(),                     name="blog-list"),
     url(r"^api/blogs/(?P<slug>[\w-]+)/$",        BlogPostDetail.as_view(),                   name="blog-detail"),

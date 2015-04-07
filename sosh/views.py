@@ -19,13 +19,10 @@ def facebook(request):
     data                = json.loads(request.body)
     access_token_url    = 'https://graph.facebook.com/oauth/access_token'
     graph_api_url       = 'https://graph.facebook.com/me'
-
-    client_secret       = settings.SOSH["facebook"]["CLIENT_SECRET"]
-
     params  = {
         "client_id"     : "%s" % (data["clientId"]),
         "redirect_uri"  : "%s" % (data["redirectUri"]),
-        "client_secret" : client_secret,
+        "client_secret" : settings.SOSH["facebook"]["CLIENT_SECRET"],
         "code"          : "%s" % (data["code"]),
     }
 
@@ -63,6 +60,76 @@ def facebook(request):
             key     = token.key
 
         social_user, created = SocialUser.objects.get_or_create(provider="facebook", user=user, uid=uid)
+        if created:
+            social_user.display_name        = display_name
+            social_user.access_token        = access_token
+            social_user.extra_data          = profile
+            social_user.save()
+        
+    output = {}
+    output["key"] = token.key
+    return HttpResponse(json.dumps(output))
+
+def google(request):
+    data                = json.loads(request.body)
+    access_token_url    = 'https://accounts.google.com/o/oauth2/token'
+    people_api_url      = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect'
+    payload             = dict(
+        client_id       = data["clientId"],
+        redirect_uri    = data['redirectUri'],
+        client_secret   = settings.SOSH["google"]["CLIENT_SECRET"],
+        code            = data['code'],
+        grant_type      = "authorization_code"
+    )
+    params = {
+        "client_id"     : "%s" % (data["clientId"]),
+        "redirect_uri"  : "%s" % (data["redirectUri"]),
+        "client_secret" : settings.SOSH["google"]["CLIENT_SECRET"],
+        "code"          : "%s" % (data["code"]),
+        "grant_type"    : "authorization_code"
+    }
+    r                   = requests.post(access_token_url, data=payload)
+    token               = json.loads(r.text)
+    access_token        = token["access_token"]
+    headers             = {'Authorization': 'Bearer %s' % (access_token)}
+
+    r                   = requests.get(people_api_url, headers=headers)
+    profile             = json.loads(r.text)
+    print profile
+
+    """
+    {u'profile': u'https://plus.google.com/+BarryMelton', u'family_name': u'Melton', u'kind': u'plus#personOpenIdConnect', u'sub': u'115219996855661305324', 
+    u'picture': u'https://lh5.googleusercontent.com/-jts7ccFyj_4/AAAAAAAAAAI/AAAAAAAANec/KweHYuchXsQ/photo.jpg?sz=50', u'locale': u'en', u'gender': u'male', 
+    u'given_name': u'Barry', u'email_verified': u'true', u'email': u'barry.melton@gmail.com', u'name': u'Barry Melton'}
+    """
+
+    provider            = "google"
+    uid                 = profile["sub"]
+    display_name        = profile["name"]
+    username            = "%s.%s" % (provider, uid)
+
+    email               = None
+    if "email" in profile:
+        email       = profile["email"]
+
+    try:
+        social_user                 = SocialUser.objects.get(uid=uid, provider="google")
+        social_user.access_token    = access_token
+        social_user.extra_data      = profile
+        social_user.save()
+        token                       = Token.objects.get(user=social_user.user)
+        key                         = token.key
+    except SocialUser.DoesNotExist, e:
+        user , created = get_user_model().objects.get_or_create(username=username, display_name=display_name, email=email)
+        if created:
+            token   = Token(user=user)
+            key     = token.generate_key()
+            token.save()
+        else:
+            token   = Token.objects.get(user=user)
+            key     = token.key
+
+        social_user, created = SocialUser.objects.get_or_create(provider="google", user=user, uid=uid)
         if created:
             social_user.display_name        = display_name
             social_user.access_token        = access_token
