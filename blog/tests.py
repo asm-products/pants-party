@@ -1,12 +1,9 @@
-from django.test import TestCase, RequestFactory
-import requests
+from django.test import TestCase
 from models import BlogPost
 from django.contrib.auth import get_user_model
-import requests
-from blog.views import BlogPostList
 from rest_framework.test import APIClient
 from rest_framework.test import APIRequestFactory
-import json
+
 
 class BlogTestCase(TestCase):
     def setUp(self):
@@ -25,9 +22,8 @@ class BlogTestCase(TestCase):
         self.assertEqual(blogs.count(), 2)
 
     def test_posts_via_api(self):
-        view = BlogPostList.as_view()
         client = APIClient()
-        response = self.client.get('/api/blogs/')
+        response = client.get('/api/blogs/')
         blog1 = response.data[0]
         blog2 = response.data[1]
 

@@ -1,89 +1,90 @@
-from django.forms import widgets
 from rest_framework import serializers
 from models import TextJoke, TextPunchline, JokeVotes
 from ppuser.serializers import UserSerializer
-# from django.contrib.auth.models import User
-from django.conf import settings
+
 
 class TextPunchlineSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
 
     def perform_create(self, serializer):
-        instance = serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user)
 
     def get_validation_exclusions(self):
-        exclusions = super(TextPunchlineSerializer, self).get_validation_exclusions()
+        exclusions = super(TextPunchlineSerializer, self) \
+            .get_validation_exclusions()
         return exclusions + ['user']
 
     class Meta:
         model = TextPunchline
-        fields = ('id', 'user', 'text', 'created', 'active', 'responses', 'score')
+        fields = ('id', 'user', 'text', 'created', 'active', 'responses',
+                  'score')
+
 
 class TextJokeSerializer(serializers.ModelSerializer):
-    user            = UserSerializer(read_only=True, many=False)
-    punchlines      = TextPunchlineSerializer(read_only=True, many=True)
-    user_has_voted  = serializers.SerializerMethodField('test_has_voted')
+    user = UserSerializer(read_only=True, many=False)
+    punchlines = TextPunchlineSerializer(read_only=True, many=True)
+    user_has_voted = serializers.SerializerMethodField('test_has_voted')
 
     def test_has_voted(self, obj):
         user = self.context['request'].user
-        print user
-        if user.is_anonymous() == True:
+        if user.is_anonymous() is True:
             # User is anonymous, so don't bother checking.
             return False
         else:
             # Determines whether or not the user has voted on a given joke.
             # time will tell whether or not this actually scales, but it's
             # not too bad schematically, using only filtered outputs of keys
-            if user.pk in obj.joke_votes.filter(user=user).filter(joke=obj).values_list("user__id", flat=True):
+            if user.pk in obj.joke_votes.filter(user=user).filter(joke=obj) \
+                   .values_list("user__id", flat=True):
                 return True
             else:
                 return False
 
     def perform_create(self, serializer):
-        instance = serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user)
 
     def get_validation_exclusions(self):
-        exclusions = super(TextJokeSerializer, self).get_validation_exclusions()
+        exclusions = super(TextJokeSerializer, self) \
+            .get_validation_exclusions()
         return exclusions + ['user']
 
     class Meta:
         model = TextJoke
-        fields = ('id', 'user_has_voted', 'user', 'punchlines', 'text', 'created', 'active', 'responses', 'score')
+        fields = ('id', 'user_has_voted', 'user', 'punchlines', 'text',
+                  'created', 'active', 'responses', 'score')
+
 
 class TextJokeSerializerSimple(serializers.ModelSerializer):
-    user            = UserSerializer(read_only=True, many=False)
-    punchlines      = TextPunchlineSerializer(read_only=True, many=True)
+    user = UserSerializer(read_only=True, many=False)
+    punchlines = TextPunchlineSerializer(read_only=True, many=True)
 
     class Meta:
         model = TextJoke
-        fields = ('id', 'user', 'punchlines', 'text', 'created', 'active', 'responses', 'score')
+        fields = ('id', 'user', 'punchlines', 'text', 'created', 'active',
+                  'responses', 'score')
+
 
 class JokeVoteSerializer(serializers.ModelSerializer):
-    user            = UserSerializer(read_only=True, many=False)
-    joke            = TextJokeSerializer(read_only=True, many=False)
+    user = UserSerializer(read_only=True, many=False)
+    joke = TextJokeSerializer(read_only=True, many=False)
 
     class Meta:
-        model   = JokeVotes
+        model = JokeVotes
         fields = ('id', 'user', 'joke', 'vote')
 
     def get_validation_exclusions(self):
-        exclusions = super(JokeVoteSerializer, self).get_validation_exclusions()
+        exclusions = super(JokeVoteSerializer, self) \
+            .get_validation_exclusions()
         return exclusions + ['user', ]
 
     def perform_create(self, serializer):
         print "I AM CREATING!"
+
 
 class SimpleJokeVoteSerializer(serializers.ModelSerializer):
-    user            = UserSerializer(read_only=True, many=False)
-    joke            = TextJokeSerializerSimple(read_only=True, many=False)
+    user = UserSerializer(read_only=True, many=False)
+    joke = TextJokeSerializerSimple(read_only=True, many=False)
 
     class Meta:
-        model   = JokeVotes
+        model = JokeVotes
         fields = ('id', 'user', 'joke', 'vote')
-
-    def get_validation_exclusions(self):
-        exclusions = super(JokeVoteSerializer, self).get_validation_exclusions()
-        return exclusions + ['user', ]
-
-    def perform_create(self, serializer):
-        print "I AM CREATING!"
