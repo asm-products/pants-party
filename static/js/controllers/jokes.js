@@ -1,8 +1,14 @@
 angular.module('PantsParty')
     .controller('JokeCtrl', function($scope, $http, $auth) {
+        console.log("HI!");
         $scope.isAuthenticated = function() { 
             return $auth.isAuthenticated();
         }
+
+        $scope.addHeart = function(joke) { 
+            console.log(joke);
+            console.log("Adding heart!");
+        };
 
         $scope.showSubmit   = false;
         
@@ -48,6 +54,7 @@ angular.module('PantsParty')
         $http.get("/api/jokes/")
             .success(function(data) { 
                 $scope.jokes = data;
+                console.log($scope.jokes);
             });
 
     })

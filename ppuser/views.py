@@ -1,5 +1,6 @@
 from models import CustomUser
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework import generics
 from rest_framework.response import Response
 from serializers import UserSerializer
@@ -8,7 +9,7 @@ from serializers import UserSerializer
 class UserList(generics.ListCreateAPIView):
     queryset = CustomUser.objects.filter(active=True)
     serializer_class = UserSerializer
-    authentication_classes = (TokenAuthentication, )
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -17,7 +18,7 @@ class UserList(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveAPIView):
     queryset = CustomUser.objects.filter(active=True)
     serializer_class = UserSerializer
-    authentication_classes = (TokenAuthentication, )
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def pre_save(self, obj):
         obj.user = self.request.user

@@ -53,12 +53,13 @@ class TextPunchline(models.Model):
 
 
 class JokeVotes(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             related_name='user_votes')
-    joke = models.ForeignKey(TextJoke, null=False, blank=False,
-                             related_name='joke_votes')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_votes')
+    joke = models.ForeignKey(TextJoke, null=False, blank=False, related_name='joke_votes')
     vote = models.IntegerField(default=0)
     ip_address = models.IPAddressField(null=True, blank=True)
 
     def __unicode__(self):
         return "%s : %s" % (self.user.username, self.vote)
+
+    class Meta:
+        unique_together = (("user", "joke"),)

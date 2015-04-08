@@ -28,14 +28,12 @@ class TextJokeSerializer(serializers.ModelSerializer):
     def test_has_voted(self, obj):
         user = self.context['request'].user
         if user.is_anonymous() is True:
-            # User is anonymous, so don't bother checking.
             return False
         else:
             # Determines whether or not the user has voted on a given joke.
             # time will tell whether or not this actually scales, but it's
             # not too bad schematically, using only filtered outputs of keys
-            if user.pk in obj.joke_votes.filter(user=user).filter(joke=obj) \
-                   .values_list("user__id", flat=True):
+            if user.pk in obj.joke_votes.filter(user=user).filter(joke=obj).values_list("user__id", flat=True):
                 return True
             else:
                 return False
