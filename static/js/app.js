@@ -147,6 +147,31 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
             transclude: false,
             templateUrl: "/static/partials/_joke.html",
             controller: function($scope, $http) { 
+                $scope.addHeart = function(joke) { 
+                    payload = {"vote": 1, "joke": joke.id}
+                    console.log(payload);
+                    $http.post("/api/votes/", payload)
+                        .success(function(data) {
+                            joke.user_has_voted = true;
+                        })
+                        .error(function(data) {
+                            console.log(data);
+                            alert("Error!");
+                        })
+                }
+
+                $scope.removeHeart = function(joke) { 
+                    payload = {"vote": 1, "joke": joke.id}
+                    $http.delete("/api/votes/" + joke.id)
+                        .success(function(data) {
+                            joke.user_has_voted = false;
+                        })
+                        .error(function(data) {
+                            console.log(data);
+                            alert("Hi!!");
+                        })
+                }
+
                 $scope.punchlineModel = { 
                     "joke_id" : null,
                     "text" : "", 

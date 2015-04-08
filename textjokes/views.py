@@ -2,11 +2,15 @@ from models import TextJoke, TextPunchline, JokeVotes
 from serializers import TextJokeSerializer, TextPunchlineSerializer, \
     JokeVoteSerializer, SimpleJokeVoteSerializer
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.db import IntegrityError
+import json
+from django.db.models import F
 
 
 @csrf_exempt
@@ -33,7 +37,7 @@ class JokeMixin(object):
 class JokeList(JokeMixin, generics.ListCreateAPIView):
     queryset = TextJoke.objects.filter(active=True)
     serializer_class = TextJokeSerializer
-    authentication_classes = (TokenAuthentication, )
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -42,7 +46,7 @@ class JokeList(JokeMixin, generics.ListCreateAPIView):
 class JokeDetail(generics.RetrieveAPIView):
     queryset = TextJoke.objects.filter(active=True)
     serializer_class = TextJokeSerializer
-    authentication_classes = (TokenAuthentication, )
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def pre_save(self, obj):
         print "JokeDetail pre_save()"
@@ -70,7 +74,7 @@ class PunchlineMixin(object):
 class PunchlineList(PunchlineMixin, generics.ListCreateAPIView):
     queryset = TextPunchline.objects.filter(active=True)
     serializer_class = TextPunchlineSerializer
-    authentication_classes = (TokenAuthentication, )
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def perform_create(self, serializer):
         saver = TextJoke.objects.get(pk=self.request.data["joke_id"])
@@ -97,29 +101,47 @@ class VoteMixin(object):
 class JokeVoteList(VoteMixin, generics.ListCreateAPIView):
     queryset = JokeVotes.objects.all()
     serializer_class = JokeVoteSerializer
-    authentication_classes = (TokenAuthentication, )
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def perform_create(self, serializer):
-        print "JokeVoteList perform_create"
-        print "\n\nSelf:"
-        print self.request.data
-
-        print "\n\nSerializer:"
-        print serializer.context.keys()
-        print dir(serializer)
-
-        print "\n\nRoot:"
-        print serializer.root.data
         serializer.save(user=self.request.user)
 
     def post(self, request, *args, **kwargs):
         joke = TextJoke.objects.get(pk=request.data["joke"])
         vote = JokeVotes()
-        vote.user = request.user
-        vote.joke = joke
-        vote.vote = "1"
-        # vote.save()
+        try:
+            vote.user = request.user
+            vote.joke = joke
+            vote.vote = "1"
+            vote.save()
+
+            joke.score = joke.score + 1
+            joke.save()
+        except IntegrityError:
+            # If a vote for this joke by this user already exists, simply 
+            # return that joke instead of creating a new one. 
+            vote = JokeVotes.objects.get(user=request.user, joke=joke)
 
         serializer = SimpleJokeVoteSerializer(vote)
-        print serializer.data
         return Response(serializer.data)
+
+
+class JokeVoteDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = JokeVotes.objects.all()
+    serializer_class = JokeVoteSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    def delete(self, request, *args, **kwargs):
+        if not request.user.is_anonymous() is True:
+            # Remove the vote.  TODO, this is very shitty.
+            joke = TextJoke.objects.get(pk=kwargs["pk"])
+            vote = JokeVotes.objects.get(user=request.user, joke=joke)
+            vote.delete()
+            
+            # Decrement the vote score
+            joke.score = F('score') - 1
+            joke.save()
+
+        output = {}
+        output["message"] = "Deleted"
+        return Response(json.dumps(output))

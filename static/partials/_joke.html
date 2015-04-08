@@ -6,6 +6,8 @@
         </div>
         <div class="col-lg-10 col-md-10 col-sm-10 col-xs-9">
             <div class="arrow-panel arrow-left col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <a ng-click="addHeart(joke);" ng-show="!joke.user_has_voted" class="glyphicon glyphicon-heart-empty"></a>
+                <a ng-click="removeHeart(joke);" ng-show="joke.user_has_voted" class="glyphicon glyphicon-heart"></a>
                 <span>{{ joke.text }}</span>
                 <a class="right btn btn-xs btn-info" 
                     ng-click="togglePunchlineSubmit(joke.id);"><span class="glyphicon glyphicon-plus" style="font-size: 9pt;"></span></a>
