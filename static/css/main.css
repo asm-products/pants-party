@@ -220,3 +220,23 @@ img.social {
 
 .footer img {
   max-height: 64px; }
+
+.subheader {
+  color: #bbb;
+  font-weight: normal;
+  font-family: "Roboto", sans-serif;
+  margin: 3px 0; }
+
+div.blog {
+  line-height: 2.1em;
+  text-align: left;
+  text-justify: none;
+  font-family: "Roboto Slab", serif;
+  font-weight: 300; }
+  div.blog a {
+    text-decoration: none;
+    color: #0066cc; }
+    div.blog a:Visited {
+      color: #0066cc; }
+    div.blog a:Hover {
+      text-decoration: underline; }
