@@ -113,6 +113,7 @@ def google(request):
             .objects.get_or_create(
                 username=username,
                 display_name=display_name,
+                avatar=profile["picture"],
                 email=email)
         if created:
             token = Token(user=user)
