@@ -1,17 +1,8 @@
-from django.contrib import admin
 from django import forms
-from django.utils.translation import ugettext, ugettext_lazy as _
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserChangeForm
 from ppuser.models import CustomUser
 
-"""
-class CustomUserCreationForm(UserCreationForm):
-    def __init__(self, *args, **kargs):
-        super(CustomUserCreationForm, self).__init__(*args, **kargs)
 
-    class Meta:
-        model = CustomUser
-"""
 class CustomUserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
@@ -38,6 +29,7 @@ class CustomUserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
 
 class CustomUserChangeForm(UserChangeForm):
     def __init__(self, *args, **kargs):

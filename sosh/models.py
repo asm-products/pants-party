@@ -8,26 +8,23 @@ from django.utils.translation import ugettext_lazy as _
 
 PROVIDERS = (
     ('facebook', 'facebook'),
-    ('twitter' , 'twitter'),
-    ('reddit'  , 'reddit'),
-    ('google'  , 'google'),
+    ('twitter', 'twitter'),
+    ('reddit', 'reddit'),
+    ('google', 'google'),
 )
 
+
 class SocialUser(models.Model):
-    user            = models.ForeignKey(settings.AUTH_USER_MODEL, unique=False)
-    provider        = models.CharField(_('provider'), max_length=20, 
-        choices=PROVIDERS, null=False, blank=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, unique=False)
+    provider = models.CharField(_('provider'), max_length=20, choices=PROVIDERS, null=False, blank=False)
 
-    access_token    = models.TextField(_('access_token'), null=True, blank=True)
-    other_token     = models.CharField(_('other_token'), max_length=255,
-        null=True, blank=True)
+    access_token = models.TextField(_('access_token'), null=True, blank=True)
+    other_token = models.CharField(_('other_token'), max_length=255, null=True, blank=True)
 
-    display_name    = models.CharField(_('display_name'), max_length=50)
-    uid             = models.CharField(_('uid'), max_length=50, blank=False, 
-        null=False)
-    # extra_data      = JSONField(_('extra_data'), default={})
-    extra_data      = JSONField(_('extra_data'))
-    date_joined     = models.DateTimeField(_('date joined'), default=timezone.now)
+    display_name = models.CharField(_('display_name'), max_length=50)
+    uid = models.CharField(_('uid'), max_length=50, blank=False, null=False)
+    extra_data = JSONField(_('extra_data'))
+    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
     class Meta:
         verbose_name = _('Social User')
