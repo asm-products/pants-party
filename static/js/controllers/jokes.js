@@ -1,6 +1,5 @@
 angular.module('PantsParty')
-    .controller('JokeCtrl', function($scope, $http, $auth) {
-        console.log("HI!");
+    .controller('JokeCtrl', function($rootScope, $scope, $http, $auth, $state) {
         $scope.isAuthenticated = function() { 
             return $auth.isAuthenticated();
         }
@@ -51,7 +50,29 @@ angular.module('PantsParty')
             $scope.plActive = joke_id;
         }
 
-        $http.get("/api/jokes/")
+        $http.get("/api/joke_categories/")
+            .success(function(data) { 
+                $scope.categories = data;
+            });
+
+        var base_url = "/api/jokes/";
+        if($state.params.id)
+            url = base_url + "?category=" + $state.params.id;
+        else
+            url = url;
+
+        $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){ 
+            if($state.params.id)
+                url = base_url + "?category=" + $state.params.id;
+
+            $http.get(url)
+                .success(function(data) { 
+                    $scope.jokes = data;
+                    console.log($scope.jokes);
+                });
+        })
+
+        $http.get(url)
             .success(function(data) { 
                 $scope.jokes = data;
                 console.log($scope.jokes);
