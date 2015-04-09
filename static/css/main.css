@@ -221,6 +221,11 @@ img.social {
 .footer img {
   max-height: 64px; }
 
+li.list-group-item.active {
+  color: white; }
+  li.list-group-item.active a {
+    color: white; }
+
 .subheader {
   color: #bbb;
   font-weight: normal;

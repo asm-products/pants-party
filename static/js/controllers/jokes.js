@@ -59,7 +59,7 @@ angular.module('PantsParty')
         if($state.params.id)
             url = base_url + "?category=" + $state.params.id;
         else
-            url = url;
+            url = base_url;
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){ 
             if($state.params.id)
