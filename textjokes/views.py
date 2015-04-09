@@ -55,6 +55,7 @@ class JokeList(JokeMixin, generics.ListCreateAPIView):
             queryset = queryset.filter(category__id=category)
         return queryset
 
+
 class JokeDetail(generics.RetrieveAPIView):
     queryset = TextJoke.objects.filter(active=True)
     serializer_class = TextJokeSerializer

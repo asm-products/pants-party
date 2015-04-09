@@ -8,6 +8,7 @@ class JokeCategorySerializer(serializers.ModelSerializer):
         model = TextJokeCategory
         fields = ('id', 'name', 'slug', 'num_jokes')
 
+
 class TextPunchlineSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
 
