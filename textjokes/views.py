@@ -1,6 +1,6 @@
-from models import TextJoke, TextPunchline, JokeVotes
+from models import TextJoke, TextPunchline, JokeVotes, TextJokeCategory
 from serializers import TextJokeSerializer, TextPunchlineSerializer, \
-    JokeVoteSerializer, SimpleJokeVoteSerializer
+    JokeVoteSerializer, SimpleJokeVoteSerializer, JokeCategorySerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import generics
@@ -34,6 +34,12 @@ class JokeMixin(object):
         return super(JokeMixin, self).pre_save(obj)
 
 
+class JokeCategoryList(JokeMixin, generics.ListCreateAPIView):
+    queryset = TextJokeCategory.objects.filter(active=True)
+    serializer_class = JokeCategorySerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+
 class JokeList(JokeMixin, generics.ListCreateAPIView):
     queryset = TextJoke.objects.filter(active=True)
     serializer_class = TextJokeSerializer
@@ -41,6 +47,13 @@ class JokeList(JokeMixin, generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        queryset = TextJoke.objects.filter(active=True)
+        category = self.request.QUERY_PARAMS.get('category', None)
+        if category is not None:
+            queryset = queryset.filter(category__id=category)
+        return queryset
 
 
 class JokeDetail(generics.RetrieveAPIView):
@@ -118,8 +131,8 @@ class JokeVoteList(VoteMixin, generics.ListCreateAPIView):
             joke.score = joke.score + 1
             joke.save()
         except IntegrityError:
-            # If a vote for this joke by this user already exists, simply 
-            # return that joke instead of creating a new one. 
+            # If a vote for this joke by this user already exists, simply
+            # return that joke instead of creating a new one.
             vote = JokeVotes.objects.get(user=request.user, joke=joke)
 
         serializer = SimpleJokeVoteSerializer(vote)
@@ -137,7 +150,7 @@ class JokeVoteDetail(generics.RetrieveUpdateDestroyAPIView):
             joke = TextJoke.objects.get(pk=kwargs["pk"])
             vote = JokeVotes.objects.get(user=request.user, joke=joke)
             vote.delete()
-            
+
             # Decrement the vote score
             joke.score = F('score') - 1
             joke.save()

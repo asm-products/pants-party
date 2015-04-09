@@ -14,8 +14,8 @@
             </div>
             <p> 
                 <a ui-sref="profile({ profileId: joke.user.id })">{{ joke.user.username }}</a>
-                <!--span class="category-article">in</span-->
-                <span class="category">{{ joke.category }}</span>
+                <span class="category-article">in</span>
+                <span class="category"><a ui-sref="jokes.category({ id: joke.category.id })">{{ joke.category.name }}</a></span>
                 <span class="right small">{{ joke.punchlines.length }} punchlines &middot; 
                 <span am-time-ago="joke.created"></span></span>
             </p>

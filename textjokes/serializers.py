@@ -1,6 +1,12 @@
 from rest_framework import serializers
-from models import TextJoke, TextPunchline, JokeVotes
+from models import TextJokeCategory, TextJoke, TextPunchline, JokeVotes
 from ppuser.serializers import UserSerializer
+
+
+class JokeCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TextJokeCategory
+        fields = ('id', 'name', 'slug', 'num_jokes')
 
 
 class TextPunchlineSerializer(serializers.ModelSerializer):
@@ -16,12 +22,12 @@ class TextPunchlineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TextPunchline
-        fields = ('id', 'user', 'text', 'created', 'active', 'responses',
-                  'score')
+        fields = ('id', 'user', 'text', 'created', 'active', 'responses', 'score')
 
 
 class TextJokeSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
+    category = JokeCategorySerializer(read_only=True, many=False)
     punchlines = TextPunchlineSerializer(read_only=True, many=True)
     user_has_voted = serializers.SerializerMethodField('test_has_voted')
 
@@ -42,14 +48,12 @@ class TextJokeSerializer(serializers.ModelSerializer):
         serializer.save(user=self.request.user)
 
     def get_validation_exclusions(self):
-        exclusions = super(TextJokeSerializer, self) \
-            .get_validation_exclusions()
+        exclusions = super(TextJokeSerializer, self).get_validation_exclusions()
         return exclusions + ['user']
 
     class Meta:
         model = TextJoke
-        fields = ('id', 'user_has_voted', 'user', 'punchlines', 'text',
-                  'created', 'active', 'responses', 'score')
+        fields = ('id', 'category', 'user_has_voted', 'user', 'punchlines', 'text', 'created', 'active', 'responses', 'score')
 
 
 class TextJokeSerializerSimple(serializers.ModelSerializer):

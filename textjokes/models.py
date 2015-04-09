@@ -1,10 +1,33 @@
 from django.db import models
 from django.conf import settings
 from datetime import datetime
+from uuslug import uuslug
+
+
+class TextJokeCategory(models.Model):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    slug = models.CharField(max_length=255, null=True, blank=True)
+    active = models.BooleanField(default=True)
+    created = models.DateTimeField(null=True, blank=True)
+    num_jokes = models.IntegerField(default=0)
+
+    def __unicode__(self):
+        return "%s" % (self.name)
+
+    def save(self, *args, **kwargs):
+        if not self.created:
+            self.created = datetime.now()
+        self.slug = uuslug(self.name, instance=self)
+        super(TextJokeCategory, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Joke Category"
+        verbose_name_plural = "Joke Categories"
 
 
 class TextJoke(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='jokes')
+    category = models.ForeignKey(TextJokeCategory, related_name='category', null=True, blank=True)
     created = models.DateTimeField(null=True, blank=True)
     text = models.CharField(max_length=255, null=False, blank=False)
     active = models.BooleanField(default=True)
@@ -29,10 +52,8 @@ class TextJoke(models.Model):
 
 
 class TextPunchline(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             related_name='user_punchlines')
-    joke = models.ForeignKey(TextJoke, null=False, blank=False,
-                             related_name='punchlines')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_punchlines')
+    joke = models.ForeignKey(TextJoke, null=False, blank=False, related_name='punchlines')
     created = models.DateTimeField(null=True, blank=True)
     text = models.CharField(max_length=255, null=False, blank=False)
     active = models.BooleanField(default=True)
@@ -63,3 +84,5 @@ class JokeVotes(models.Model):
 
     class Meta:
         unique_together = (("user", "joke"),)
+        verbose_name = "Joke Vote"
+        verbose_name_plural = "Joke Votes"

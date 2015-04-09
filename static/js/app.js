@@ -50,6 +50,9 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                 templateUrl: '/static/partials/jokes.html',
                 controller: 'JokeCtrl',
             })
+            .state('jokes.category', {
+                url: '/:id',
+            })
             .state('login', {
                 url: '/login',
                 templateUrl: '/static/partials/login.html',
