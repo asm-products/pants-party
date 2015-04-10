@@ -25,7 +25,11 @@ angular.module('PantsParty')
         $http.get("/api/users/me/")
             .success(function(data) {
                 $scope.userData = data;
-                localStorage.setItem("avatar", data.avatar);
+                console.log($scope.userData.avatar);
+                if($scope.userData.avatar !== "")
+                    localStorage.setItem("avatar", data.avatar);
+                else
+                    localStorage.setItem("avatar", "/static/images/anonymous.png");
                 localStorage.setItem("username", data.display_name);
                 $rootScope.$broadcast("avatarChanged");
             })
