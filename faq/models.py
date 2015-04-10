@@ -10,6 +10,7 @@ class FAQ(models.Model):
     updated = models.DateTimeField(null=True, blank=True)
     helpful_yes = models.IntegerField()
     helpful_no = models.IntegerField()
+    active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "FAQ"
