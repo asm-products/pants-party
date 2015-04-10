@@ -21,6 +21,50 @@ angular.module('PantsParty')
         };
     })
 
+    .controller('HelloCtrl', ['$scope', '$state', '$http', '$rootScope', function($scope, $state, $http, $rootScope) {
+        $http.get("/api/users/me/")
+            .success(function(data) {
+                $scope.userData = data;
+                localStorage.setItem("avatar", data.avatar);
+                localStorage.setItem("username", data.display_name);
+                $rootScope.$broadcast("avatarChanged");
+            })
+
+        $scope.helloForm = function(form) { 
+            $http.post("/api/users/me/", $scope.userData)
+                .success(function(data) {
+                    $scope.userData = data;
+                    swal("Hooray!", "You saved your thing.  That's cool.", "success");
+                    console.log(data);
+                })
+                .error(function(data) {
+                    console.log(data);
+                    alert("Hi!");
+                })
+            console.log($scope.userData);
+        };
+
+        $scope.available = true;
+        $scope.usernameAvailable = function() { 
+            if(typeof($scope.userData.username) === "undefined") {
+                $scope.available = false;
+            } else { 
+                if($scope.userData.username.length <= 2)
+                    $scope.available = false;
+                else { 
+                    $http.get("/api/username/available/" + $scope.userData.username)
+                        .success(function(data) {
+                            $scope.available = data.available;
+                        })
+                }
+            };
+        };
+
+        var unmet_condition = false;
+        if(unmet_condition) 
+            $state.go("home");
+    }])
+
     .controller('ProfileCtrl', function($scope, $auth, $http, $stateParams) {
         if($stateParams.profileId) {
             console.log($stateParams.profileId);

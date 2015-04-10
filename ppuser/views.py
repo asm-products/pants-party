@@ -5,6 +5,8 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework import generics
 from rest_framework.response import Response
 from serializers import UserSerializer, MeSerializer
+from rest_framework import status
+import json
 
 
 class UsernameAvailable(APIView):
@@ -33,6 +35,41 @@ class MeList(APIView):
         serializer = MeSerializer(data)
         return Response(serializer.data)
         # queryset = self.get_queryset()
+
+    def post(self, request, format=None):
+        # Have to ignore .is_valid() serializer method because of the lack of PK update.
+        # It's weird, but what isn't?
+        serializer = MeSerializer(data=request.data)
+
+        # Only update current logged-in user, getting username from request
+        user = CustomUser.objects.get(pk=request.user.pk)
+
+        # Have to validate to satisfy DRF, but then I'll ignore it.
+        temp = serializer.is_valid()
+
+        try: 
+            user.username = request.data["username"]
+            user.email = request.data["email"]
+            user.set_profile = True
+            user.save()
+            serializer = MeSerializer(user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception, e:
+            output = {}
+            output["error"] = str(e)
+            return Response(json.dumps(output), status=status.HTTP_400_BAD_REQUEST)
+
+        if serializer.is_valid():
+            # Serializer won't validate if username is the same.  That is dumb.  Need to exclude it.
+            print "Valid?"
+            # TODO - Verify that username is valid and unique
+            # TODO - Verify that email address is valid and unique
+            # TODO - Send email trigger that email address has changed and needs verification
+            # TODO - Ensure that user's "set_profile" field is set True on success
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserList(generics.ListCreateAPIView):

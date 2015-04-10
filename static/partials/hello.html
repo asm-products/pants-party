@@ -1,6 +1,28 @@
 <topheader></topheader>
 
+<style>
+    .alert {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+        margin: 5px 0 5px 0;
+        padding: 15px 0 15px 15px;
+        -webkit-border-radius: 3px;
+           -moz-border-radius: 3px;
+             -o-border-radius: 3px;
+                border-radius: 3px;
+    }
+
+    .alert h1, .alert h2, .alert h3 { 
+        margin-top: 0px;
+    }
+</style>
+
 <div class="container">
+    <div ng-show="!userData.set_profile" class="row alert">
+        <h3>Annoyance!</h3>
+        Please ensure that your email address and username are filled out as you want them to be, and this message will go away.
+    </div>
     <div class="row">
         <br />
         <div class="col-lg-2">
@@ -9,8 +31,6 @@
         </div>
         <div class="col-lg-10">
             <h1>{{ userData.display_name }}</h1>
-            {{ userData }} 
-            <hr />
             <form name="profileForm" id="profileForm" ng-submit="helloForm();">
                 <div class="row">
                     <div class="col-lg-2">
@@ -37,7 +57,7 @@
                         <input type="email" required="true" ng-model="userData.email" />
                     </div>
                 </div>
-                <input type="submit" name="submit" value="Submit" />
+                <input class="btn btn-primary" type="submit" name="submit" value="Submit" />
             </form>
             <br />
             <br />
