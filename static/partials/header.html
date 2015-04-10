@@ -13,7 +13,12 @@
                         <li class="login-link"><a class="login-link" ui-sref="login">Login</a></li>
                     </span>
                     <span ng-hide="!isAuthenticated()">
-                        <li><a href="javascript:;" ng-click="logout();">Log Out</a></li>
+                        <li>
+                            <a href="javascript:;" ng-click="logout();">
+                                <img ng-show="avatar" style="max-height: 48px; margin-top:-16px; border: 0; padding: 2px; margin: 0; float: left; position: absolute; top: -12px; right: -48px;" class="img-responsive img-thumbnail img-circle" src="{{ avatar }}" />
+                                Log Out
+                            </a>
+                        </li>
                     </span>
                     <li>{{ isAuthenticated }}</li>
                 </ul>

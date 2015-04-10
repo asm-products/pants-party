@@ -3,6 +3,7 @@ from django.contrib import admin
 from views import FacebookLogin, TwitterLogin, UserList, UserDetail
 from textjokes.views import JokeList, PunchlineList, JokeDetail, JokeVoteList, JokeVoteDetail, JokeCategoryList, api_root
 from blog.views import BlogPostList, BlogPostDetail
+from ppuser.views import MeList, UsernameAvailable
 from sosh.views import test, facebook, google, twitter
 
 urlpatterns = patterns("",
@@ -19,7 +20,8 @@ urlpatterns = patterns("",
                        url(r"^api/jokes/(?P<pk>[0-9]+)/$", JokeDetail.as_view(), name="joke-detail"),
                        url(r"^api/votes/$", JokeVoteList.as_view(), name="joke-votes"),
                        url(r"^api/votes/(?P<pk>[0-9]+)/$", JokeVoteDetail.as_view(), name="joke-votes-detail"),
-                       url(r"^api/users/$", UserList.as_view(), name="user-list"),
+                       url(r"^api/users/me/$", MeList.as_view(), name="me"),
+                       url(r"^api/username/available/(?P<username>\w+)/$", UsernameAvailable.as_view(), name="available"),
                        url(r"^api/users/$", UserList.as_view(), name="user-list"),
                        url(r"^api/users/(?P<pk>[0-9]+)/$", UserDetail.as_view()),
                        url(r"^test/$", test),

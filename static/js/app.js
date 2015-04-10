@@ -1,4 +1,4 @@
-angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMoment', 'ngSanitize', 'btford.markdown', ])
+angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMoment', 'ngSanitize', 'btford.markdown', 'ngMessages', ])
 
     .config(function($stateProvider, $urlRouterProvider, $locationProvider, $authProvider) {
         $stateProvider
@@ -68,9 +68,15 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                 templateUrl: "/static/partials/profile.html",
                 controller: 'ProfileCtrl',
             })
+            .state('hello', {
+                url: '/hello',
+                templateUrl: "/static/partials/hello.html",
+                controller: 'HelloCtrl',
+            })
 
         $authProvider.loginUrl = '/rest-auth/login/';
         $authProvider.tokenName = 'key';
+        $authProvider.loginRedirect = '/hello';
         $authProvider.facebook({
             url: '/auth/facebook/',
             clientId: '383981465065889',
@@ -118,15 +124,30 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
         };
     })
 
-    .directive('topheader', [function($scope, $auth) {
+    .directive('topheader', [function($rootScope, $scope, $http, $auth) {
         return {
             restrict: "E",
             transclude: false,
             templateUrl: "/static/partials/header.html",
-            controller: function($scope, $http, $auth) {
+            controller: function($rootScope, $scope, $http, $auth) {
                 $scope.isAuthenticated = function() {
                     return $auth.isAuthenticated();
                 };
+
+                $rootScope.$on("avatarChanged", function(event, data) { 
+                    if(localStorage.getItem("avatar") !== null) 
+                        $scope.avatar = localStorage.getItem("avatar");
+
+                    if(localStorage.getItem("username") !== null) 
+                        $scope.username = localStorage.getItem("username");
+                });
+
+                if(localStorage.getItem("avatar") !== null) 
+                    $scope.avatar = localStorage.getItem("avatar");
+
+                if(localStorage.getItem("username") !== null) 
+                    $scope.username = localStorage.getItem("username");
+
             },
             link: function(scope, elem, attrs) {
             }

@@ -38,7 +38,7 @@
                     {{ punchline.text }}
                 </div>
                 <p> 
-                    {{ punchline.user.username }}
+                    <a ui-sref="profile({ profileId: punchline.user.id })">{{ punchline.user.username }}</a>
                     <span class="right small"><span am-time-ago="joke.created"></span></span>
                 </p>
             </div>

@@ -2,8 +2,7 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-lg-6">
-            <h2 class="text-center">Log in</h2>
+        <!--div class="col-lg-6">
             <a ng-click="hello();">Hi</a><br />
             <form method="post" ng-submit="login()" name="loginForm">
                 <div class="form-group has-feedback">
@@ -33,12 +32,22 @@
                     <hr>
                 </div>
             </form>
-        </div>
-        <div class="col-lg-6">
+        </div-->
+        <div class="col-lg-5">
             <img class="social" src="/static/images/social/facebook.png" ng-click="authenticate('facebook')" />
             <img class="social" src="/static/images/social/twitter.png" ng-click="authenticate('twitter')" />
             <img class="social" src="/static/images/social/google.png" ng-click="authenticate('google')" />
-            <img class="social" src="/static/images/social/reddit.png" ng-click="authenticate('reddit')" />
+        </div>
+        <div class="col-lg-7">
+            <h1 class="text-center">Log in</h1>
+            <p>Log in with your favoritest social network provider.</p>
+            <p>
+                Don't worry, we'll add more to this page to make it less bleh.
+                Also, I'm trying very hard to support reddit as a login
+                provider, but their oAuth implementation is weird. 
+            </p>
+            <br /><br />
+            <br />
         </div>
     </div>
 </div>
