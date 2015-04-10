@@ -8,6 +8,7 @@ class TextJokeCategory(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     slug = models.CharField(max_length=255, null=True, blank=True)
     active = models.BooleanField(default=True)
+    description = models.TextField(null=True, blank=True)
     created = models.DateTimeField(null=True, blank=True)
     num_jokes = models.IntegerField(default=0)
 
