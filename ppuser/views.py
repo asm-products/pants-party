@@ -1,13 +1,42 @@
 from models import CustomUser
+from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import generics
 from rest_framework.response import Response
-from serializers import UserSerializer
+from serializers import UserSerializer, MeSerializer
+
+
+class UsernameAvailable(APIView):
+    def get(self, request, *args, **kwargs):
+        print kwargs["username"]
+
+        try:
+            result = CustomUser.objects.get(username="%s" % kwargs["username"])
+            output = {}
+            output["available"] = False
+        except CustomUser.DoesNotExist:
+            output = {}
+            output["available"] = True
+
+        return Response(output)
+
+
+class MeList(APIView):
+    serializer_class = MeSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    def get(self, request, *args, **kwargs):
+        print request.user
+        user = request.user
+        data =  CustomUser.objects.get(pk=user.pk)
+        serializer = MeSerializer(data)
+        return Response(serializer.data)
+        # queryset = self.get_queryset()
 
 
 class UserList(generics.ListCreateAPIView):
-    queryset = CustomUser.objects.filter(active=True)
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, SessionAuthentication)
 
@@ -16,7 +45,7 @@ class UserList(generics.ListCreateAPIView):
 
 
 class UserDetail(generics.RetrieveAPIView):
-    queryset = CustomUser.objects.filter(active=True)
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (TokenAuthentication, SessionAuthentication)
 
