@@ -4,11 +4,6 @@ angular.module('PantsParty')
             return $auth.isAuthenticated();
         }
 
-        $scope.addHeart = function(joke) { 
-            console.log(joke);
-            console.log("Adding heart!");
-        };
-
         $scope.showSubmit   = false;
         
         $scope.jokeModel = {}
@@ -26,6 +21,7 @@ angular.module('PantsParty')
                 })
                 .error(function(data) {
                     console.log(data);
+                    swal("Error!", "So, this is embarrassing, but for some reason, your joke was not submitted.", "error")
                 })
         }
 
@@ -56,26 +52,43 @@ angular.module('PantsParty')
             });
 
         var base_url = "/api/jokes/";
+
         if($state.params.id)
             url = base_url + "?category=" + $state.params.id;
         else
             url = base_url;
 
-        $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){ 
-            if($state.params.id)
-                url = base_url + "?category=" + $state.params.id;
-
-            $http.get(url)
-                .success(function(data) { 
-                    $scope.jokes = data;
-                    console.log($scope.jokes);
-                });
-        })
-
         $http.get(url)
             .success(function(data) { 
                 $scope.jokes = data;
-                console.log($scope.jokes);
+                $scope.category_description = null;
+                if($state.params.id) {
+                    if($scope.jokes.length >= 1) {
+                        $scope.category_description = $scope.jokes[0].category.description;
+                    } else {
+                        $scope.category_description = null;
+                    }
+                }
             });
+
+        $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){ 
+            $scope.category_description = null;
+            if($state.params.id)
+                url = base_url + "?category=" + $state.params.id;
+            else
+                url = base_url;
+
+            $http.get(url)
+                .success(function(data) { 
+                    $scope.category_description = null;
+                    $scope.jokes = data;
+                    if($state.params.id) {
+                        if($scope.jokes.length >= 1)
+                            $scope.category_description = $scope.jokes[0].category.description;
+                    } else {
+                        $scope.category_description = null;
+                    }
+                });
+        })
 
     })
