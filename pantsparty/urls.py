@@ -3,6 +3,7 @@ from django.contrib import admin
 from views import FacebookLogin, TwitterLogin, UserList, UserDetail
 from textjokes.views import JokeList, PunchlineList, JokeDetail, JokeVoteList, JokeVoteDetail, JokeCategoryList, api_root
 from blog.views import BlogPostList, BlogPostDetail
+from faq.views import FAQList
 from ppuser.views import MeList, UsernameAvailable
 from sosh.views import test, facebook, google, twitter
 
@@ -28,5 +29,6 @@ urlpatterns = patterns("",
                        url(r"^auth/facebook/$", facebook),
                        url(r"^auth/google/$", google),
                        url(r"^auth/twitter/$", twitter),
+                       url(r"^api/faq/$", FAQList.as_view(), name="faq-list"),
                        url(r"^api/blogs/$", BlogPostList.as_view(), name="blog-list"),
                        url(r"^api/blogs/(?P<slug>[\w-]+)/$", BlogPostDetail.as_view(), name="blog-detail"),)

@@ -20,6 +20,7 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
             .state('faq', {
                 url: '/faq',
                 templateUrl: '/static/partials/faq.html',
+                controller: 'FAQCtrl',
             })
             .state('help', {
                 url: '/help',
