@@ -28,6 +28,7 @@
         <div class="col-lg-2">
             <span ng-show="userData.avatar != ''"><img class="img-responsive img-thumbnail img-circle" src="{{ userData.avatar }}" /></span>
             <span ng-show="userData.avatar == ''"><img class="img-responsive img-thumbnail img-circle" src="/static/images/anonymous.png" /></span>
+            <div class="btn btn-primary btn-upload" upload-button url="/api/upload/" on-success="uploadSuccess(response)" on-error="uploadError(response)">Change Avatar</div>
         </div>
         <div class="col-lg-10">
             <h1>{{ userData.display_name }}</h1>
