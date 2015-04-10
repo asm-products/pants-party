@@ -5,11 +5,12 @@ from uuslug import uuslug
 
 class FAQ(models.Model):
     question = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255, null=True, blank=True)
     answer = models.TextField()
     created = models.DateTimeField(null=True, blank=True)
     updated = models.DateTimeField(null=True, blank=True)
-    helpful_yes = models.IntegerField()
-    helpful_no = models.IntegerField()
+    helpful_yes = models.IntegerField(default=0)
+    helpful_no = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
 
     class Meta:
