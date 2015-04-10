@@ -6,7 +6,35 @@ from rest_framework import generics
 from rest_framework.response import Response
 from serializers import UserSerializer, MeSerializer
 from rest_framework import status
+from django.core.files.base import ContentFile
 import json
+from time import time
+import os
+
+
+class UploadAvatar(APIView):
+    def post(self, request):
+        written_filename = None
+        for filename, file in request.FILES.iteritems():
+            BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+            output_folder = "%s/static/avatars" % (BASE_DIR)
+            output_filename = "%s.png" % (request.user.pk)
+            destination = "%s/%s" % (output_folder, output_filename)
+
+            file_content = ContentFile(request.FILES[filename].read())
+
+            # TODO - Need to parse the name and give the output file the right extension.
+            fout = open(destination, 'wb+')
+            for chunk in file_content.chunks():
+                fout.write(chunk)
+            fout.close() 
+            written_filename = destination
+        print self.request.user
+
+        output = {}
+        output["data"] = destination
+        output["statusText"] = "File uploaded successfully"
+        return Response(json.dumps(output), status=204)
 
 
 class UsernameAvailable(APIView):

@@ -1,4 +1,4 @@
-angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMoment', 'ngSanitize', 'btford.markdown', 'ngMessages', ])
+angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMoment', 'ngSanitize', 'btford.markdown', 'ngMessages', 'lr.upload', ])
 
     .config(function($stateProvider, $urlRouterProvider, $locationProvider, $authProvider) {
         $stateProvider

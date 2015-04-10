@@ -22,6 +22,16 @@ angular.module('PantsParty')
     })
 
     .controller('HelloCtrl', ['$scope', '$state', '$http', '$rootScope', function($scope, $state, $http, $rootScope) {
+        $scope.uploadSuccess = function(response) { 
+            swal("Hooray!", "You saved your avatar.  That's cool, I guess.", "success");
+            console.log(response);
+        };
+
+        $scope.uploadError = function(response) { 
+            console.log(response);
+            swal("Ouch!", "So, the thing you tried to do? It didn't work.", "error");
+        };
+
         $http.get("/api/users/me/")
             .success(function(data) {
                 $scope.userData = data;
