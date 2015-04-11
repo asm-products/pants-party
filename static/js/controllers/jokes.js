@@ -1,5 +1,5 @@
 angular.module('PantsParty')
-    .controller('JokeCtrl', function($rootScope, $scope, $http, $auth, $state) {
+    .controller('JokeCtrl', function($rootScope, $scope, $http, $auth, $state, $analytics) {
         $scope.isAuthenticated = function() { 
             return $auth.isAuthenticated();
         }
@@ -35,6 +35,7 @@ angular.module('PantsParty')
                     $scope.jokes[joke_id].punchlines.unshift(data);
                     $scope.punchlineModel = {}
                     swal("Good job!", "Your joke is submitted!", "success")
+                    $analytics.eventTrack("submitted-joke");
                 })
                 .error(function(data) {
                     console.log(data);
@@ -73,6 +74,7 @@ angular.module('PantsParty')
 
         $rootScope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){ 
             $scope.category_description = null;
+            $analytics.eventTrack("joke-category", {category: $state.params.id});
             if($state.params.id)
                 url = base_url + "?category=" + $state.params.id;
             else
