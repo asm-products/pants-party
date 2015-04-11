@@ -10,3 +10,6 @@ python-virtualenv
 libjpeg-dev
 zlib1g-dev
 libpng12-dev
+
+curl
+software-properties-common
