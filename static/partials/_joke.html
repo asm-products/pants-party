@@ -13,9 +13,9 @@
                     ng-click="togglePunchlineSubmit(joke.id);"><span class="glyphicon glyphicon-plus" style="font-size: 9pt;"></span></a>
             </div>
             <p> 
-                <a ui-sref="profile({ profileId: joke.user.id })">{{ joke.user.username }}</a>
+                <a ui-sref="profile({ profileId: joke.user.id })" analytics-on="click" analytics-event="profile">{{ joke.user.username }}</a>
                 <span class="category-article">in</span>
-                <span class="category"><a ui-sref="jokes.category({ id: joke.category.id })">{{ joke.category.name }}</a></span>
+                <span class="category"><a ui-sref="jokes.category({ id: joke.category.id })" analytics-on="click" analytics-event="category.{{ category.id }}">{{ joke.category.name }}</a></span>
                 <span class="right small">{{ joke.punchlines.length }} punchlines &middot; 
                 <span am-time-ago="joke.created"></span></span>
             </p>
@@ -38,7 +38,7 @@
                     {{ punchline.text }}
                 </div>
                 <p> 
-                    <a ui-sref="profile({ profileId: punchline.user.id })">{{ punchline.user.username }}</a>
+                    <a ui-sref="profile({ profileId: punchline.user.id })" analytics-on="click" analytics-event="profile">{{ punchline.user.username }}</a>
                     <span class="right small"><span am-time-ago="joke.created"></span></span>
                 </p>
             </div>

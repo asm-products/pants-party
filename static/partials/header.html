@@ -6,15 +6,15 @@
             </div>
             <div id="nav" class="col-lg-6 col-md-6 col-xs-12 last-lg last-md" ng-controller="NavCtrl">
                 <ul>
-                    <li><a ui-sref="home">Home</a></li>
-                    <li><a ui-sref="blog">Blog</a></li>
-                    <li><a ui-sref="jokes">Jokes</a></li>
+                    <li><a ui-sref="home" analytics-on="click">Home</a></li>
+                    <li><a ui-sref="blog" analytics-on="click">Blog</a></li>
+                    <li><a ui-sref="jokes" analytics-on="click">Jokes</a></li>
                     <span ng-hide="isAuthenticated()">
-                        <li class="login-link"><a class="login-link" ui-sref="login">Login</a></li>
+                        <li class="login-link"><a class="login-link" analytics-on="click" ui-sref="login">Login</a></li>
                     </span>
                     <span ng-hide="!isAuthenticated()">
                         <li>
-                            <a href="javascript:;" ng-click="logout();">
+                            <a href="javascript:;" ng-click="logout();" analytics-on="click">
                                 <img ng-show="avatar" style="max-height: 48px; margin-top:-16px; border: 0; padding: 2px; margin: 0; float: left; position: absolute; top: -12px; right: -48px;" class="img-responsive img-thumbnail img-circle" src="{{ avatar }}" />
                                 Log Out
                             </a>
