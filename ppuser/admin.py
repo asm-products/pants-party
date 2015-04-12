@@ -15,7 +15,7 @@ class CustomUserAdmin(UserAdmin):
         (None, {'fields': ('username', 'display_name', 'email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'avatar')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        (_('Important dates'), {'fields': ('last_login', 'date_joined', 'verified_on')}),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined', 'is_verified', 'verified_on', 'set_profile')}),
     )
     add_fieldsets = (
         (None, {'classes': ('wide',), 'fields': ('username', 'display_name', 'first_name', 'last_name', 'email', 'password1', 'password2')}),

@@ -37,6 +37,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
                                                                            'active. Unselect this instead of deleting accounts.'))
     is_verified = models.BooleanField(_('verified'), default=False, help_text=_('Designates whether the user has been verified via an email confirmation.'))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+    set_profile = models.BooleanField(_('set_profile'), default=False, help_text=('Has the user set up his profile.'))
     verified_on = models.DateTimeField(_('verified on'), blank=True, null=True)
     objects = CustomUserManager()
 

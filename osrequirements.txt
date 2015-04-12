@@ -1,0 +1,15 @@
+# Adding this here because later we'll need to implement a fabric or Ansible
+# script that will be used to prep the OS before deployment
+# These are the packages that will be required
+
+python
+python-dev
+mysql--someversion-server?
+python-virtualenv
+
+libjpeg-dev
+zlib1g-dev
+libpng12-dev
+
+curl
+software-properties-common

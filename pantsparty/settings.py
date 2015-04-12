@@ -73,9 +73,11 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.twitter',
 
     'blog',
+    'faq',
     'corsheaders',
     'ppuser',
     'sosh',
+    'subscriptions',
     'textjokes',
     # 'testresp',
 )

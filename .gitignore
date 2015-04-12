@@ -4,5 +4,6 @@ dev_settings.py
 prod_settings.py
 .DS_Store
 .sass-cache/
+static/avatars/*
 #pycharm settings
 .idea/

@@ -10,29 +10,77 @@
         <link rel="stylesheet" href="/static/css/main.css" />
         <link rel="stylesheet" href="/static/css/sweetalert.css" />
         <link rel="icon" type="image/ico" href="/static/images/favicon.ico">
+        <style type="text/css">
+            /* TODO - This needs to be moved to its own SASS file. */
+            .btn-upload {
+              position: relative;
+              overflow: hidden;
+              font-size: 14px;
+              margin-top: 8px;
+              width: 100%;
+            }
+
+            .btn-upload input {
+              position: absolute;
+              top: 0;
+              right: 0;
+              margin: 0;
+              opacity: 0;
+              filter: alpha(opacity=0);
+              transform: translate(-300px, 0) scale(4);
+              -webkit-transform: translate(-300px, 0) scale(4);
+              -ms-transform: translate(-300px, 0) scale(4);
+              -o-transform: translate(-300px, 0) scale(4);
+              font-size: 23px;
+              direction: ltr;
+              cursor: pointer;
+            }
+
+            * html .btn-upload {
+              line-height: 24px;
+              margin: 1px -3px 0 0;
+            }
+
+            * + html .btn-upload {
+              padding: 2px 15px;
+              margin: 1px 0 0 0;
+            }
+        </style>
     </head>
     <body>
         <div ui-view id="content"></div>
     </body>
-    <script src="/static/js/vendor/sweetalert/sweetalert.min.js"></script>
-    <script src="/static/js/vendor/moment/moment.js"></script>
-    <script src="/static/js/vendor/angular-1.3.15/angular.min.js"></script>
-    <script src="/static/js/vendor/moment/angular.moment.js"></script>
-    <script src="/static/js/vendor/angular-1.3.15/angular-aria.min.js"></script>
-    <script src="/static/js/vendor/angular-1.3.15/angular-cookies.min.js"></script>
-    <script src="/static/js/vendor/angular-1.3.15/angular-messages.min.js"></script>
-    <script src="/static/js/vendor/angular-1.3.15/angular-resource.min.js"></script>
-    <script src="/static/js/vendor/angular-1.3.15/angular-route.min.js"></script>
-    <script src="/static/js/vendor/angular-1.3.15/angular-sanitize.min.js"></script>
-    <script src="/static/js/vendor/ui-router.0.2.13/angular-ui-router.min.js"></script>
+    <script src="/static/js/bower_components/sweetalert/lib/sweet-alert.min.js"></script>
+    <script src="/static/js/bower_components/momentjs/min/moment.min.js"></script>
+    <script src="/static/js/bower_components/angular/angular.min.js"></script>
+    <script src="/static/js/bower_components/angulartics/dist/angulartics.min.js"></script>
+    <script src="/static/js/bower_components/angulartics/dist/angulartics-ga.min.js"></script>
+    <script src="/static/js/bower_components/angular-moment/angular-moment.min.js"></script>
+    <script src="/static/js/bower_components/angular-aria/angular-aria.min.js"></script>
+    <script src="/static/js/bower_components/angular-cookies/angular-cookies.min.js"></script>
+    <script src="/static/js/bower_components/angular-messages/angular-messages.min.js"></script>
+    <script src="/static/js/bower_components/angular-resource/angular-resource.min.js"></script>
+    <script src="/static/js/bower_components/angular-route/angular-route.min.js"></script>
+    <script src="/static/js/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script src="/static/js/bower_components/ui-router/release/angular-ui-router.min.js"></script>
+    <script src="/static/js/bower_components/angular-upload/angular-upload.min.js"></script>
     <script src="/static/js/app.js"></script>
-    <script src="/static/js/vendor/satellizer-0.9.4/satellizer.js"></script>
-    <script src="/static/js/vendor/showdown/Showdown.js"></script>
-    <script src="/static/js/vendor/showdown/markdown.js"></script>
-    <!--script src="/static/js/services/auth.js"></script-->
+    <script src="/static/js/bower_components/satellizer/satellizer.js"></script>
+    <script src="/static/js/bower_components/showdown/compressed/Showdown.min.js"></script>
+    <script src="/static/js/bower_components/angular-markdown-directive/markdown.js"></script>
     <script src="/static/js/controllers/home.js"></script>
     <script src="/static/js/controllers/login.js"></script>
     <script src="/static/js/controllers/blog.js"></script>
     <script src="/static/js/controllers/nav.js"></script>
     <script src="/static/js/controllers/jokes.js"></script>
+    <script src="/static/js/controllers/faq.js"></script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-372592-31', 'auto');
+        // ga('send', 'pageview');
+    </script>
 </html>

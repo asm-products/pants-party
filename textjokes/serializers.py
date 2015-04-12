@@ -7,7 +7,7 @@ from ppuser.serializers import UserSerializer
 class JokeCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TextJokeCategory
-        fields = ('id', 'name', 'slug', 'num_jokes')
+        fields = ('id', 'name', 'slug', 'description', 'num_jokes')
 
 
 class TextCommentSerializer(serializers.ModelSerializer):

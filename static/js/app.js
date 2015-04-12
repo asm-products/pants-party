@@ -1,4 +1,4 @@
-angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMoment', 'ngSanitize', 'btford.markdown', ])
+angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMoment', 'ngSanitize', 'btford.markdown', 'ngMessages', 'lr.upload', 'angulartics', 'angulartics.google.analytics', ])
 
     .config(function($stateProvider, $urlRouterProvider, $locationProvider, $authProvider) {
         $stateProvider
@@ -20,6 +20,7 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
             .state('faq', {
                 url: '/faq',
                 templateUrl: '/static/partials/faq.html',
+                controller: 'FAQCtrl',
             })
             .state('help', {
                 url: '/help',
@@ -68,9 +69,15 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                 templateUrl: "/static/partials/profile.html",
                 controller: 'ProfileCtrl',
             })
+            .state('hello', {
+                url: '/hello',
+                templateUrl: "/static/partials/hello.html",
+                controller: 'HelloCtrl',
+            })
 
         $authProvider.loginUrl = '/rest-auth/login/';
         $authProvider.tokenName = 'key';
+        $authProvider.loginRedirect = '/hello';
         $authProvider.facebook({
             url: '/auth/facebook/',
             clientId: '383981465065889',
@@ -106,6 +113,26 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
         });
     })
 
+    .config(['$httpProvider', 'satellizer.config', function($httpProvider, config) {
+        $httpProvider.interceptors.push(['$q', function($q) {
+            var tokenName = config.tokenPrefix ? config.tokenPrefix + '_' + config.tokenName : config.tokenName;
+                return {
+                    request: function(httpConfig) {
+                        if (localStorage.getItem(tokenName)) {
+                            httpConfig.headers.Authorization = 'Token ' + localStorage.getItem(tokenName);
+                        }
+                        return httpConfig;
+                    },
+                    responseError: function(response) {
+                        if (response.status === 401) {
+                            localStorage.removeItem(tokenName);
+                        }
+                        return $q.reject(response);
+                    }
+                };
+            }]);
+        }])
+
     .run( function run($http, $cookies ){
         $http.defaults.headers.post['X-CSRFToken'] = $cookies['csrftoken'];
     })
@@ -118,18 +145,62 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
         };
     })
 
-    .directive('topheader', [function($scope, $auth) {
+    .directive('topheader', [function($rootScope, $scope, $http, $auth) {
         return {
             restrict: "E",
             transclude: false,
             templateUrl: "/static/partials/header.html",
-            controller: function($scope, $http, $auth) {
+            controller: function($rootScope, $scope, $http, $auth, $analytics) {
                 $scope.isAuthenticated = function() {
                     return $auth.isAuthenticated();
                 };
+
+                $rootScope.$on("avatarChanged", function(event, data) { 
+                    $analytics.eventTrack("changed-avatar");
+                    if(localStorage.getItem("avatar") !== null) 
+                        $scope.avatar = localStorage.getItem("avatar");
+
+                    if(localStorage.getItem("username") !== null) 
+                        $scope.username = localStorage.getItem("username");
+                });
+
+                if(localStorage.getItem("avatar") !== null) 
+                    $scope.avatar = localStorage.getItem("avatar");
+
+                if(localStorage.getItem("username") !== null) 
+                    $scope.username = localStorage.getItem("username");
+
             },
             link: function(scope, elem, attrs) {
             }
+        }
+    }])
+
+    .directive('subscriber', [function($scope, $http) {
+        return {
+            restrict: "E", 
+            transclude: false,
+            templateUrl: "/static/partials/subscription.html",
+            controller: function($scope, $http) {
+                $scope.subscription = {
+                    email : ""
+                };
+
+                $scope.submitSubscription = function() { 
+                    console.log($scope.subscription);
+                    $http.post("/api/subscription/", $scope.subscription)
+                        .success(function(data) {
+                            swal("Word 'em up.", "You're the lyrical gangster.  Oh wait, no you're not.  Either way, we'll keep you up to date on things.", "success");
+                        })  
+                        .error(function(data) {
+                            if(data.message == "Duplicate.")
+                                swal("Nice try", "Looks like we already had your email.", "error");
+                            else
+                                swal("Oh how sad.", "That didn't work.  Not even a little bit.", "error");
+                        })  
+                }   
+            },
+            link: function(scope, elem, attrs) {}
         }
     }])
 
@@ -149,10 +220,10 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
             },
             transclude: false,
             templateUrl: "/static/partials/_joke.html",
-            controller: function($scope, $http) { 
+            controller: function($scope, $http, $analytics) { 
                 $scope.addHeart = function(joke) { 
+                    $analytics.eventTrack("added-heart", {joke: joke.id});
                     payload = {"vote": 1, "joke": joke.id}
-                    console.log(payload);
                     $http.post("/api/votes/", payload)
                         .success(function(data) {
                             joke.user_has_voted = true;
@@ -164,6 +235,7 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                 }
 
                 $scope.removeHeart = function(joke) { 
+                    $analytics.eventTrack("removed-heart", {joke: joke.id});
                     payload = {"vote": 1, "joke": joke.id}
                     $http.delete("/api/votes/" + joke.id)
                         .success(function(data) {
@@ -171,7 +243,7 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                         })
                         .error(function(data) {
                             console.log(data);
-                            alert("Hi!!");
+                            alert("Error!!");
                         })
                 }
 
@@ -180,9 +252,8 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                     "text" : "", 
                 }   
                 $scope.submitPunchline = function(obj, joke_id) { 
-                    console.log($scope.jokes);
+                    $analytics.eventTrack("submitted-punchline", {joke: joke_id});
                     $scope.punchlineModel.joke_id = joke_id;
-                    console.log($scope.punchlineModel);
                     $http.post("/api/punchlines/", $scope.punchlineModel)
                         .success(function(data) {
                             $scope.punchlineModel = {}

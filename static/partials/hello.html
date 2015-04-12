@@ -1,0 +1,71 @@
+<topheader></topheader>
+
+<style>
+    .alert {
+        color: #a94442;
+        background-color: #f2dede;
+        border-color: #ebccd1;
+        margin: 5px 0 5px 0;
+        padding: 15px 0 15px 15px;
+        -webkit-border-radius: 3px;
+           -moz-border-radius: 3px;
+             -o-border-radius: 3px;
+                border-radius: 3px;
+    }
+
+    .alert h1, .alert h2, .alert h3 { 
+        margin-top: 0px;
+    }
+</style>
+
+<div class="container">
+    <div ng-show="!userData.set_profile" class="row alert">
+        <h3>Annoyance!</h3>
+        Please ensure that your email address and username are filled out as you want them to be, and this message will go away.
+    </div>
+    <div class="row">
+        <br />
+        <div class="col-lg-2">
+            <span ng-show="userData.avatar != ''"><img class="img-responsive img-thumbnail img-circle" src="{{ userData.avatar }}" /></span>
+            <span ng-show="userData.avatar == ''"><img class="img-responsive img-thumbnail img-circle" src="/static/images/anonymous.png" /></span>
+            <div class="btn btn-primary btn-upload" upload-button url="/api/upload/" on-success="uploadSuccess(response)" on-error="uploadError(response)">Change Avatar</div>
+        </div>
+        <div class="col-lg-10">
+            <h1>{{ userData.display_name }}</h1>
+            <form name="profileForm" id="profileForm" ng-submit="helloForm();">
+                <div class="row">
+                    <div class="col-lg-2">
+                        Username:
+                    </div>
+                    <div class="col-lg-10">
+                        <input name="username" type="text" ng-minlength=3 required ng-blur="usernameAvailable();" ng-model="userData.username" />
+                        <span style="color: green;"><span style="font-color: green;" ng-show="available" class="glyphicon glyphicon-ok-sign"></span></span>
+                        <span style="color: red;"><span style="font-color: red;" ng-show="!available" class="glyphicon glyphicon-remove-sign"></span></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-2">&nbsp;</div>
+                    <div class="col-lg-10">
+                        <div ng-messages="profileForm.username.$error" style="color:maroon">
+                            <div ng-message="required">Username is required</div>
+                            <div ng-message="minlength">Username is too short.  Must be at least 3 characters in length.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-2">Email:</div>
+                    <div class="col-lg-10">
+                        <input type="email" required="true" ng-model="userData.email" />
+                    </div>
+                </div>
+                <input class="btn btn-primary" type="submit" name="submit" value="Submit" />
+            </form>
+            <br />
+            <br />
+            <br />
+            <br />
+        </div>
+    </div>
+</div>
+
+<bottomfooter></bottomfooter>
