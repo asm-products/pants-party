@@ -83,6 +83,8 @@ INSTALLED_APPS = (
     # 'testresp',
 )
 
+EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
