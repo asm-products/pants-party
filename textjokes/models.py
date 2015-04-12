@@ -87,3 +87,29 @@ class JokeVotes(models.Model):
         unique_together = (("user", "joke"),)
         verbose_name = "Joke Vote"
         verbose_name_plural = "Joke Votes"
+
+
+class TextComment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name='comments')
+    joke = models.ForeignKey(TextJoke, null=True, blank=True,
+                             related_name='comments')
+    punch_line = models.ForeignKey(TextPunchline, null=True, blank=True,
+                                   related_name='comments')
+    text = models.CharField(max_length=255, null=False, blank=False)
+    created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+    active = models.BooleanField(default=True)
+
+    def comment_on(self):
+        if self.punch_line:
+            return 'punchline'
+        else:
+            return 'joke'
+    
+    def __unicode__(self):
+        return self.user.username + ' commented: ' + self.text
+        
+    class Meta:
+        verbose_name = "Joke Comment"
+        verbose_name_plural = "Joke Comments"
+
