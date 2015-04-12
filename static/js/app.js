@@ -113,6 +113,26 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
         });
     })
 
+    .config(['$httpProvider', 'satellizer.config', function($httpProvider, config) {
+        $httpProvider.interceptors.push(['$q', function($q) {
+            var tokenName = config.tokenPrefix ? config.tokenPrefix + '_' + config.tokenName : config.tokenName;
+                return {
+                    request: function(httpConfig) {
+                        if (localStorage.getItem(tokenName)) {
+                            httpConfig.headers.Authorization = 'Token ' + localStorage.getItem(tokenName);
+                        }
+                        return httpConfig;
+                    },
+                    responseError: function(response) {
+                        if (response.status === 401) {
+                            localStorage.removeItem(tokenName);
+                        }
+                        return $q.reject(response);
+                    }
+                };
+            }]);
+        }])
+
     .run( function run($http, $cookies ){
         $http.defaults.headers.post['X-CSRFToken'] = $cookies['csrftoken'];
     })
