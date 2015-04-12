@@ -1,6 +1,8 @@
-from models import TextJoke, TextPunchline, JokeVotes, TextJokeCategory
+from models import TextJoke, TextPunchline, JokeVotes, TextJokeCategory, \
+    TextComment
 from serializers import TextJokeSerializer, TextPunchlineSerializer, \
-    JokeVoteSerializer, SimpleJokeVoteSerializer, JokeCategorySerializer
+    JokeVoteSerializer, SimpleJokeVoteSerializer, JokeCategorySerializer, \
+    TextCommentSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import generics
@@ -21,6 +23,7 @@ def api_root(request, format=None):
         'jokes': reverse('joke-list', request=request, format=format),
         'votes': reverse('joke-votes', request=request, format=format),
         'punchlines': reverse('punchline-list', request=request, format=format),
+        'comments': reverse('comment-list', request=request, format=format),
     })
 
 
@@ -158,3 +161,32 @@ class JokeVoteDetail(generics.RetrieveUpdateDestroyAPIView):
         output = {}
         output["message"] = "Deleted"
         return Response(json.dumps(output))
+
+
+class CommentMixin(object):
+    model = TextComment
+    serializer_class = TextCommentSerializer
+
+    def pre_save(self, obj):
+        obj.user = self.request.user
+        return super(CommentMixin, self).pre_save(obj)
+
+    def post_save(self, obj):
+        obj.user = self.request.user
+        super(CommentMixin, self).post_save(obj)
+
+
+class CommentList(CommentMixin, generics.ListCreateAPIView):
+    queryset = TextComment.objects.filter(active=True)
+    serializer_class = TextCommentSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    def perform_create(self, serializer):
+        joke_saver = TextJoke.objects.get(pk=self.request.data["joke_id"])
+        punchline_saver = None
+        if self.request.data["punchline_id"]:
+            punchline_saver = TextPunchline.objects.get(
+                pk=self.request.data["punchline_id"])
+
+        serializer.save(user=self.request.user, joke=joke_saver,
+                        punch_line=punchline_saver)

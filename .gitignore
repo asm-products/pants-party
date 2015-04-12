@@ -4,3 +4,5 @@ dev_settings.py
 prod_settings.py
 .DS_Store
 .sass-cache/
+#pycharm settings
+.idea/

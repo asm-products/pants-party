@@ -198,7 +198,42 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                         $scope.plActive = null;
                     else
                         $scope.plActive = joke_id;
-                }   
+                }
+
+                $scope.commentModel = {
+                    "joke_id" : null,
+                    "punchline_id": null,
+                    "text" : "",
+                }
+                $scope.submitComment = function(obj, joke_id, punchline_id) {
+                    $scope.commentModel.joke_id = joke_id;
+                    if (punchline_id){
+                        $scope.commentModel.punchline_id = punchline_id;
+                    }
+                    $http.post("/api/comments/", $scope.commentModel)
+                        .success(function(data) {
+                            $scope.commentModel = {};
+                            swal("Good job!", "Your comment is submitted!", "success");
+                            $scope.cjActive = null;
+                        })
+                        .error(function(data) {
+                            console.log(data);
+                        })
+                }
+
+                $scope.toggleCommentOnJokeSubmit = function(joke_id) {
+                    if(joke_id == $scope.cjActive)
+                        $scope.cjActive = null;
+                    else
+                        $scope.cjActive = joke_id;
+                }
+
+                $scope.toggleCommentOnPunchlineSubmit = function(punchline_id) {
+                    if(punchline_id == $scope.cpActive)
+                        $scope.cpActive = null;
+                    else
+                        $scope.cpActive = punchline_id;
+                }
 
             }
         }

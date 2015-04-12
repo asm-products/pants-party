@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from models import TextJokeCategory, TextJoke, TextPunchline, JokeVotes
+from models import TextJokeCategory, TextJoke, TextPunchline, JokeVotes, \
+    TextComment
 from ppuser.serializers import UserSerializer
 
 
@@ -9,8 +10,17 @@ class JokeCategorySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'slug', 'num_jokes')
 
 
+class TextCommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = TextComment
+        fields = ('id', 'user', 'text', 'active', 'created', 'comment_on')
+
+
 class TextPunchlineSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
+    comments = TextCommentSerializer(read_only=True, many=True)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -22,7 +32,7 @@ class TextPunchlineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TextPunchline
-        fields = ('id', 'user', 'text', 'created', 'active', 'responses', 'score')
+        fields = ('id', 'user', 'text', 'created', 'active', 'responses', 'score', 'comments')
 
 
 class TextJokeSerializer(serializers.ModelSerializer):
@@ -30,6 +40,7 @@ class TextJokeSerializer(serializers.ModelSerializer):
     category = JokeCategorySerializer(read_only=True, many=False)
     punchlines = TextPunchlineSerializer(read_only=True, many=True)
     user_has_voted = serializers.SerializerMethodField('test_has_voted')
+    comments = TextCommentSerializer(read_only=True, many=True)
 
     def test_has_voted(self, obj):
         user = self.context['request'].user
@@ -53,17 +64,18 @@ class TextJokeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TextJoke
-        fields = ('id', 'category', 'user_has_voted', 'user', 'punchlines', 'text', 'created', 'active', 'responses', 'score')
+        fields = ('id', 'category', 'user_has_voted', 'user', 'punchlines', 'text', 'created', 'active', 'responses', 'score', 'comments')
 
 
 class TextJokeSerializerSimple(serializers.ModelSerializer):
     user = UserSerializer(read_only=True, many=False)
     punchlines = TextPunchlineSerializer(read_only=True, many=True)
+    comments = TextCommentSerializer(read_only=True, many=True)
 
     class Meta:
         model = TextJoke
         fields = ('id', 'user', 'punchlines', 'text', 'created', 'active',
-                  'responses', 'score')
+                  'responses', 'score', 'comments')
 
 
 class JokeVoteSerializer(serializers.ModelSerializer):

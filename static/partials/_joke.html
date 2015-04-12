@@ -10,7 +10,9 @@
                 <a ng-click="removeHeart(joke);" ng-show="joke.user_has_voted" class="glyphicon glyphicon-heart"></a>
                 <span>{{ joke.text }}</span>
                 <a class="right btn btn-xs btn-info" 
-                    ng-click="togglePunchlineSubmit(joke.id);"><span class="glyphicon glyphicon-plus" style="font-size: 9pt;"></span></a>
+                    ng-click="togglePunchlineSubmit(joke.id);"><span class="glyphicon glyphicon-plus" style="font-size: 9pt;"></span>&nbsp;Punchline</a>
+                <a class="right btn btn-xs btn-success"
+                    ng-click="toggleCommentOnJokeSubmit(joke.id);"><span class="glyphicon glyphicon-plus" style="font-size: 9pt;"></span>&nbsp;Comment</a>
             </div>
             <p> 
                 <a ui-sref="profile({ profileId: joke.user.id })">{{ joke.user.username }}</a>
@@ -21,26 +23,89 @@
             </p>
         </div>
     </div>
-    <div class="row jokeList reply" ng-show="plActive==joke.id">
-        <div class="col-lg-offset-2 col-lg-10">
-            <form ng-submit="submitPunchline(this, joke.id);">
-                <input ng-model="punchlineModel.text" />
-            </form>
+    <div class="col-sm-6">
+        <h2 class="col-sm-12">Comments</h2>
+        <div class="row jokeList reply" ng-show="cjActive==joke.id">
+            <div class="col-lg-offset-2 col-lg-10">
+                <form ng-submit="submitComment(this, joke.id);">
+                    <div class="form-group">
+                        <label>Comment</label>
+                        <input ng-model="commentModel.text" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row" ng-repeat="comment in joke.comments">
+            <div class="row jokeList reply" ng-if="comment.comment_on == 'joke'">
+                <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-3 col-lg-2 col-md-2 col-sm-2 col-xs-3 text-right">
+                    <img class="img-responsive img-thumbnail img-circle" ng-src="{{ punchline.user.avatar }}" />
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6">
+                    <p>
+                        {{ comment.user.username }} commented on joke:
+                        <span class="right small"><span am-time-ago="comment.created"></span></span>
+                    </p>
+                    <div class="arrow-panel arrow-left col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        {{ comment.text }}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div ng-repeat="punchline in joke.punchlines">
-        <div class="row jokeList reply">
-            <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-3 col-lg-2 col-md-2 col-sm-2 col-xs-3 text-right">
-                <img class="img-responsive img-thumbnail img-circle" ng-src="{{ punchline.user.avatar }}" />
+    <div class="col-sm-6">
+        <h2 class="col-sm-12">Punchlines</h2>
+        <div class="row jokeList reply" ng-show="plActive==joke.id">
+            <div class="col-lg-offset-2 col-lg-10">
+                <form ng-submit="submitPunchline(this, joke.id);">
+                    <div class="form-group">
+                        <label>Your punchline:</label>
+                        <input ng-model="punchlineModel.text" />
+                    </div>
+                </form>
             </div>
-            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6">
-                <div class="arrow-panel arrow-left col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    {{ punchline.text }}
+        </div>
+        <div ng-repeat="punchline in joke.punchlines">
+            <div class="row jokeList reply">
+                <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-3 col-lg-2 col-md-2 col-sm-2 col-xs-3 text-right">
+                    <img class="img-responsive img-thumbnail img-circle" ng-src="{{ punchline.user.avatar }}" />
                 </div>
-                <p> 
-                    {{ punchline.user.username }}
-                    <span class="right small"><span am-time-ago="joke.created"></span></span>
-                </p>
+                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6">
+                    <div class="arrow-panel arrow-left col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        {{ punchline.text }}
+                    </div>
+                    <p>
+                        {{ punchline.user.username }}
+                        <span class="right small"><span am-time-ago="joke.created"></span></span>
+                    </p>
+                    <a class="right btn btn-xs btn-success"
+                        ng-click="toggleCommentOnPunchlineSubmit(punchline.id);"><span class="glyphicon glyphicon-plus" style="font-size: 9pt;"></span>&nbsp;Comment</a>
+                </div>
+            </div>
+            <div class="row jokeList reply" ng-show="cpActive==punchline.id">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <form ng-submit="submitComment(this, joke.id, punchline.id);">
+                        <div class="form-group">
+                            <label>Comment</label>
+                            <input ng-model="commentModel.text" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div ng-repeat="comment in punchline.comments">
+                <div class="row jokeList reply">
+                    <div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-3 col-lg-2 col-md-2 col-sm-2 col-xs-3 text-right">
+                        <img class="img-responsive img-thumbnail img-circle" ng-src="{{ punchline.user.avatar }}" />
+                    </div>
+                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-6">
+                        <p>
+                            {{ comment.user.username }} commented on punchline:
+                            <span class="right small"><span am-time-ago="comment.created"></span></span>
+                        </p>
+                        <div class="arrow-panel arrow-left col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            {{ comment.text }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
