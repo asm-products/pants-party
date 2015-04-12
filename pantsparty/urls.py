@@ -6,6 +6,7 @@ from blog.views import BlogPostList, BlogPostDetail
 from faq.views import FAQList
 from ppuser.views import MeList, UsernameAvailable, UploadAvatar
 from sosh.views import test, facebook, google, twitter
+from subscriptions.views import SubscriptionView
 
 urlpatterns = patterns("",
                        url(r"^$", "pantsparty.views.home", name="home"),
@@ -26,6 +27,7 @@ urlpatterns = patterns("",
                        url(r"^api/users/$", UserList.as_view(), name="user-list"),
                        url(r"^api/users/(?P<pk>[0-9]+)/$", UserDetail.as_view()),
                        url(r"^api/upload/$", UploadAvatar.as_view()),
+                       url(r"^api/subscription/$", SubscriptionView.as_view()),
                        url(r"^test/$", test),
                        url(r"^auth/facebook/$", facebook),
                        url(r"^auth/google/$", google),

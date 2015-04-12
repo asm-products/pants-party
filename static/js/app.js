@@ -176,6 +176,34 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
         }
     }])
 
+    .directive('subscriber', [function($scope, $http) {
+        return {
+            restrict: "E", 
+            transclude: false,
+            templateUrl: "/static/partials/subscription.html",
+            controller: function($scope, $http) {
+                $scope.subscription = {
+                    email : ""
+                };
+
+                $scope.submitSubscription = function() { 
+                    console.log($scope.subscription);
+                    $http.post("/api/subscription/", $scope.subscription)
+                        .success(function(data) {
+                            swal("Word 'em up.", "You're the lyrical gangster.  Oh wait, no you're not.  Either way, we'll keep you up to date on things.", "success");
+                        })  
+                        .error(function(data) {
+                            if(data.message == "Duplicate.")
+                                swal("Nice try", "Looks like we already had your email.", "error");
+                            else
+                                swal("Oh how sad.", "That didn't work.  Not even a little bit.", "error");
+                        })  
+                }   
+            },
+            link: function(scope, elem, attrs) {}
+        }
+    }])
+
     .directive('teaser', [function($scope) {
         return {
             restrict: "E",

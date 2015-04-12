@@ -77,6 +77,7 @@ INSTALLED_APPS = (
     'corsheaders',
     'ppuser',
     'sosh',
+    'subscriptions',
     'textjokes',
     # 'testresp',
 )
