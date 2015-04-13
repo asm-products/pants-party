@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.admin.apps.SimpleAdminConfig'
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
