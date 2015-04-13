@@ -9,6 +9,7 @@ from ppuser.views import MeList, UsernameAvailable, UploadAvatar
 from sosh.views import test, facebook, google, twitter
 from subscriptions.views import SubscriptionView
 
+
 urlpatterns = patterns("",
                        url(r"^$", "pantsparty.views.home", name="home"),
                        url(r"^admin/", include(admin.site.urls)),

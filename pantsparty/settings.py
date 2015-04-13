@@ -1,4 +1,4 @@
-"""
+""",
 Django settings for pantsparty project.
 
 For more information on this file, see
@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    # 'django.contrib.admin.apps.SimpleAdminConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
