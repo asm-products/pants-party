@@ -7,6 +7,11 @@ from faq.views import FAQList
 from ppuser.views import MeList, UsernameAvailable, UploadAvatar
 from sosh.views import test, facebook, google, twitter
 from subscriptions.views import SubscriptionView
+from djrill import DjrillAdminSite
+
+
+admin.site = DjrillAdminSite()
+
 
 urlpatterns = patterns("",
                        url(r"^$", "pantsparty.views.home", name="home"),
