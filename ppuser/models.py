@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
+from shortuuid import uuid
 
 
 class CustomUserManager(BaseUserManager):
@@ -36,6 +37,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True, help_text=_('Designates whether this user should be treated as '
                                                                            'active. Unselect this instead of deleting accounts.'))
     is_verified = models.BooleanField(_('verified'), default=False, help_text=_('Designates whether the user has been verified via an email confirmation.'))
+    verify_token = models.CharField(max_length=22, null=True, blank=True)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     set_profile = models.BooleanField(_('set_profile'), default=False, help_text=('Has the user set up his profile.'))
     verified_on = models.DateTimeField(_('verified on'), blank=True, null=True)
@@ -43,6 +45,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
+
+    def save(self, *args, **kwargs):
+        if not self.verify_token:
+            self.verify_token = uuid()
+        return super(CustomUser, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _('user')

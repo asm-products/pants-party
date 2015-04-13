@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.twitter',
 
     'blog',
+    'djrill',
     'faq',
     'corsheaders',
     'ppuser',
@@ -81,6 +82,8 @@ INSTALLED_APPS = (
     'textjokes',
     # 'testresp',
 )
+
+EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
