@@ -1,4 +1,19 @@
 angular.module('PantsParty')
+    .controller('TokenCtrl', function($scope, $auth, $state, $http) {
+        if($state.params.token) {
+            $http.get("/api/verify-token/" + $state.params.token)
+                .success(function(data) {
+                    console.log(data);
+                    $scope.verified = true;
+                    swal("Verified", "Your token has been verified, and you are a full-fledged member of society, or like, an astronaut, or something.", "success");
+                })
+                .error(function(data) {
+                    $scope.verified = false;
+                    swal("Not verified", "For some odd reason, your token was not verified.  I can't imagine why this would be, so that really sucks.", "error");
+                })
+        }
+    })
+
     .controller('LoginCtrl', function($scope, $auth) {
         $scope.login = function() {
             $auth.login({ username: $scope.username, password: $scope.password })

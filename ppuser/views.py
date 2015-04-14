@@ -69,7 +69,9 @@ class VerifyTokenView(APIView):
     def get(self, request, *args, **kwargs):
         print kwargs["token"]
         try:
-            CustomUser.objects.get(verify_token="%s" % kwargs["token"])
+            user = CustomUser.objects.get(verify_token="%s" % kwargs["token"])
+            user.is_verified = True
+            user.save()
             output = {}
             output["available"] = True
             return Response(output, status=200)

@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
 from shortuuid import uuid
+from datetime import datetime
 
 
 class CustomUserManager(BaseUserManager):
@@ -49,6 +50,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         if not self.verify_token:
             self.verify_token = uuid()
+
+        if self.verify_token and not self.verified_on:
+            self.verified_on = datetime.now()
+
         return super(CustomUser, self).save(*args, **kwargs)
 
     class Meta:

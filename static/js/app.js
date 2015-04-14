@@ -54,6 +54,11 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
             .state('jokes.category', {
                 url: '/:id',
             })
+            .state('verify', {
+                url: '/verify/:token',
+                templateUrl: "/static/partials/verify-token.html",
+                controller: 'TokenCtrl',
+            })
             .state('login', {
                 url: '/login',
                 templateUrl: '/static/partials/login.html',
