@@ -5,9 +5,10 @@ from textjokes.views import JokeList, PunchlineList, JokeDetail, JokeVoteList,\
     JokeVoteDetail, JokeCategoryList, api_root, CommentList
 from blog.views import BlogPostList, BlogPostDetail
 from faq.views import FAQList
-from ppuser.views import MeList, UsernameAvailable, UploadAvatar
+from ppuser.views import MeList, UsernameAvailable, UploadAvatar, VerifyTokenView
 from sosh.views import test, facebook, google, twitter
 from subscriptions.views import SubscriptionView
+
 
 urlpatterns = patterns("",
                        url(r"^$", "pantsparty.views.home", name="home"),
@@ -19,6 +20,7 @@ urlpatterns = patterns("",
                        url(r"^api/$", api_root),
                        url(r"^api/punchlines/$", PunchlineList.as_view(), name="punchline-list"),
                        url(r"^api/comments/$", CommentList.as_view(), name="comment-list"),
+                       url(r"^api/verify-token/(?P<token>[\w-]+)/$", VerifyTokenView.as_view(), name="verify-token"),
                        url(r"^api/jokes/$", JokeList.as_view(), name="joke-list"),
                        url(r"^api/joke_categories/$", JokeCategoryList.as_view(), name="joke-category-list"),
                        url(r"^api/jokes/(?P<pk>[0-9]+)/$", JokeDetail.as_view(), name="joke-detail"),
