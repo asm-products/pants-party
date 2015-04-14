@@ -3,6 +3,12 @@ from rest_framework import serializers
 from models import CustomUser
 
 
+class VerifyTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'username', 'verify_token')
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
