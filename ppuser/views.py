@@ -1,12 +1,12 @@
+from django.core.files.base import ContentFile
 from models import CustomUser
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authentication import SessionAuthentication
 from rest_framework import generics
 from rest_framework.response import Response
-from serializers import UserSerializer, MeSerializer
+from serializers import UserSerializer, MeSerializer, VerifyTokenSerializer
 from rest_framework import status
-from django.core.files.base import ContentFile
 from PIL import Image, ImageChops, ImageOps
 import json
 import os
@@ -63,6 +63,21 @@ class UploadAvatar(APIView):
         output["data"] = data
         output["statusText"] = "File uploaded successfully"
         return Response(output, status=201)
+
+
+class VerifyTokenView(APIView):
+    def get(self, request, *args, **kwargs):
+        print kwargs["token"]
+        try:
+            CustomUser.objects.get(verify_token="%s" % kwargs["token"])
+            output = {}
+            output["available"] = True
+            return Response(output, status=200)
+        except Exception, e:
+            output = {}
+            output["available"] = False
+            output["message"] = "%s" % str(e)
+            return Response(output, status=400)
 
 
 class UsernameAvailable(APIView):
