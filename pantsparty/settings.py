@@ -77,6 +77,7 @@ INSTALLED_APPS = (
     'djrill',
     'faq',
     'corsheaders',
+    'opbeat.contrib.django',
     'ppuser',
     'sosh',
     'subscriptions',
@@ -96,6 +97,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 MIDDLEWARE_CLASSES = (
+    'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
