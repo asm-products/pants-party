@@ -1,4 +1,4 @@
-"""
+""",
 Django settings for pantsparty project.
 
 For more information on this file, see
@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    # 'django.contrib.admin.apps.SimpleAdminConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
@@ -76,6 +77,7 @@ INSTALLED_APPS = (
     'djrill',
     'faq',
     'corsheaders',
+    'opbeat.contrib.django',
     'ppuser',
     'sosh',
     'subscriptions',
@@ -95,6 +97,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 MIDDLEWARE_CLASSES = (
+    'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
