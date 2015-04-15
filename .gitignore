@@ -7,3 +7,5 @@ prod_settings.py
 static/avatars/*
 #pycharm settings
 .idea/
+node_modules/
+static/config.codekit
