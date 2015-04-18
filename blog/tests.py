@@ -11,11 +11,11 @@ class BlogTestCase(TestCase):
         self.user = get_user_model().objects.create_user(username='bmelton', email='barry.melton@gmail.com', password='top_secret')
         self.factory = APIRequestFactory()
 
-        blog = BlogPost(id=1, author=self.user, title="Test Blog Title 1", body="This is a test blog article.")
-        blog.save()
+        blog1 = BlogPost(id=1, author=self.user, title="Test Blog Title 1", body="This is a test blog article.")
+        blog1.save()
 
-        blog = BlogPost(id=2, author=self.user, title="Test Blog Title 2", body="This is another test blog article.")
-        blog.save()
+        blog2 = BlogPost(id=2, author=self.user, title="Test Blog Title 2", body="This is another test blog article.")
+        blog2.save()
 
     def test_posts_created(self):
         blogs = BlogPost.objects.all()
