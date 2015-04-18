@@ -1,0 +1,3 @@
+- Updated FAQ model
+- Updated Subscription model
+- Changed Subscription view to CreateAPIView
