@@ -19,3 +19,8 @@ def send_verify_email(to, token):
     msg.use_template_subject = True
     msg.use_template_from = True
     msg.send()
+
+def count(to, token=None):
+    print "Hello"
+    print "This is a thing"
+    return to

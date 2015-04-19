@@ -98,10 +98,9 @@ except Exception:
 @receiver(post_save, sender=CustomUser)
 def handle(sender, instance, created, **kwargs):
     if created and instance.email and not instance.is_verified:
-        job = q.enqueue(send_welcome_email, instance.email)
+        # job = q.enqueue(send_welcome_email, instance.email)
+        job = q.enqueue("Hi World")
 
     if instance.email and not instance.is_verified:
-        job = q.enqueue(send_verify_email, instance.email, instance.verify_token)
-    print sender
-    print kwargs
-
+        # job = q.enqueue(send_verify_email, instance.email, instance.verify_token)
+        job = q.enqueue("Hi", "World")
