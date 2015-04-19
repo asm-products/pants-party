@@ -90,10 +90,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 redis_conn = Redis()
-try: 
-    q = Queue(connection=redis_conn)  # no args implies the default queue
-except Exception:
-    q = Queue(connection=conn)
+# try: 
+    # q = Queue(connection=redis_conn)  # no args implies the default queue
+# except Exception:
+    # q = Queue(connection=conn)
+q = Queue(connection=conn)
 
 @receiver(post_save, sender=CustomUser)
 def handle(sender, instance, created, **kwargs):
