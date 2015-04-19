@@ -1,0 +1,178 @@
+html
+    margin: 0
+    padding: 0
+
+body 
+    margin: 0
+    padding: 0
+    font: 140% $font-stack
+    color: $primary-text-color
+    line-height: 1.3em
+
+a
+    text-decoration: none
+    color: $optional-link-color
+
+    &:hover
+        text-decoration: underline
+
+.copyright
+    font-family: $font-stack
+
+ul 
+    margin: 0
+    padding: 0
+    li 
+        list-style-type: none
+        margin: 0
+        padding: 0
+        padding: 2px 0 0px 0
+        margin: 2px 0 0px 0
+
+        a, &:Visited  
+            text-decoration: none
+            padding: 8px 0 8px 0
+            margin: 8px 0 8px 0
+
+        &:Hover  
+            text-decoration: underline
+
+    &.footer li a:Link 
+        color: $primary-text-color
+    
+img.crop
+    height: 300px
+    overflow: hidden
+
+#nav 
+    font-size: 16pt
+    color: $secondary-text-color
+    margin-top: 18px
+    text-align: right
+    ul 
+        list-style-type: none
+        float: right
+        li 
+            float: left
+            a, &:visited 
+                color: $secondary-text-color
+                padding: 0 0 0 34px
+
+            &:hover 
+                text-decoration: underline
+
+.wrap  
+    max-width: 1200px
+
+.teaser-text
+    text-align: left
+
+.right
+    text-align: right
+    float: right
+
+.small
+    font-size: 80%
+
+section#header  
+    background-color: $secondary-bg-color
+    padding: 30px 0 22px 0
+
+section#teaser  
+    background-color: $secondary-bg-color
+    padding: 30px 0 0 0
+    min-height: 300px
+    border-bottom: 5px solid #91d3f7
+    color: $secondary-text-color
+    line-height: 2.2em
+
+    .teaser-text
+        h1  
+            font-family: $font-stack
+            font-weight: 400
+            padding: 0 40px 0 0
+
+        h3 
+            font-family: $font-stack-alternate
+            font-weight: normal
+
+#monitor
+    height: 305px
+    width: 536px
+    margin: 0 0 -5px 0
+    float: right
+
+section#body  
+    background-color: #fff 
+    padding: 30px 0 22px 0
+
+section#footer1  
+    border-top: 2px solid #dce2e2
+    background-color: $footer-bg-color
+    padding: 20px 0 35px 0  
+    font-weight: 100
+    line-height: 1.4em
+
+    h1
+        margin: 0 0 8px 0
+
+section#footer2  
+    background-color: $copy-footer-bg-color
+    padding: 35px 0 35px 0 
+    color: $secondary-text-color
+    text-align: center
+
+section#footer1 h1 
+    font-size: 14pt
+    font-weight: bold
+
+#logo 
+    width:  280px
+    height: 50px
+
+.jokeList
+    margin: 20px 0 80px 0
+
+    img
+        max-width: 88px
+    p 
+        margin: -6px 0 0 0
+        padding: 0 0 0 20px
+
+    .category-article
+        color: #666666
+
+    .category
+        color: #666666
+        text-transform: uppercase
+
+    .pad-right-20 
+        margin: 0 20px 0 0
+
+    .pad-right-40 
+        margin: 0 40px 0 0
+
+.jokeList.reply
+    margin-top: -50px
+
+li.login-link
+    margin-left: 24px !important
+
+a.login-link
+    padding: 8px 20px !important
+    background-color: #113F8C
+    -webkit-border-radius: 4px
+
+img.social 
+    max-height: 128px
+    max-width: 128px
+
+.footer img 
+    max-height: 64px
+
+li.list-group-item.active
+    color: white
+
+    a
+        color: white 
+    
