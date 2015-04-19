@@ -86,6 +86,7 @@ INSTALLED_APPS = (
 )
 
 EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+MANDRILL_API_KEY = os.environ["MANDRILL_API_KEY"]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
