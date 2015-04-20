@@ -88,6 +88,29 @@ INSTALLED_APPS = (
 EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
 MANDRILL_API_KEY = os.environ["MANDRILL_API_KEY"]
 
+OPBEAT = { 
+    "ORGANIZATION_ID": "5ffb6078bbc54300a78b4593190be7e0",
+    "APP_ID": "a0cdfc36c7",
+    "SECRET_TOKEN": os.environ["OPBEAT_SECRET_TOKEN"],
+    "DEBUG": True
+}
+
+SOSH = { 
+    "google" :{
+        "CLIENT_ID": "619194941129-08kmjd2nbt526kqmdhc5sgtkt669j2cg.apps.googleusercontent.com",
+        "CLIENT_SECRET": os.environ["SOSH_GOOGLE_SECRET"],
+        "CALLBACK_URL": "http://pants.party/auth/google/"
+    },  
+    "twitter" : { 
+        "CONSUMER_KEY": "c2WJqCMkG9M39bZcas5cid1ms",
+        "CONSUMER_SECRET": os.environ["SOSH_TWITTER_SECRET"],
+        "CALLBACK_URL": "http://pants.party/auth/twitter/"
+    },  
+    "facebook" :{
+        "CLIENT_SECRET": os.environ["SOSH_FACEBOOK_SECRET"]
+    }   
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
@@ -133,6 +156,44 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 SITE_ID = 1
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+    },
+    'handlers': {
+        'opbeat': {
+            'level': 'WARNING',
+            'class': 'opbeat.contrib.django.handlers.OpbeatHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'mysite': {
+            'level': 'WARNING',
+            'handlers': ['opbeat'],
+            'propagate': False,
+        },
+        'opbeat.errors': {
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+    },
+}
 
 try:
     from dev_settings import *
