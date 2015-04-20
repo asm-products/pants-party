@@ -91,7 +91,7 @@ MANDRILL_API_KEY = os.environ["MANDRILL_API_KEY"]
 OPBEAT = { 
     "ORGANIZATION_ID": "5ffb6078bbc54300a78b4593190be7e0",
     "APP_ID": "a0cdfc36c7",
-    "SECRET_TOKEN": os.environ["OPBEAT_SECRET_TOKEN"],
+    "SECRET_TOKEN": "%s" % (os.environ["OPBEAT_SECRET_TOKEN"]),
     "DEBUG": True
 }
 
