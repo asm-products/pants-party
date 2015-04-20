@@ -1,0 +1,18 @@
+<topheader></topheader>
+
+<section id="body" class="page-section">
+    <div class="wrap container-fluid" >
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h1>FAQ</h1>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-repeat="faq in faqs">
+                <h4>{{ faq.question }}</h4>
+                <p>{{ faq.answer }}</p>
+                <hr />
+            </div>
+        </div>
+    </div>
+</section>
+
+<bottomfooter></bottomfooter>

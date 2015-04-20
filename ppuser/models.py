@@ -84,20 +84,24 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 # This is where the signal stuff belongs, I guess.
 from rq import Queue
 from redis import Redis
+from worker import conn
 from mailframework.mails import send_verify_email, send_welcome_email
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 redis_conn = Redis()
-q = Queue(connection=redis_conn)  # no args implies the default queue
+# try: 
+    # q = Queue(connection=redis_conn)  # no args implies the default queue
+# except Exception:
+    # q = Queue(connection=conn)
+q = Queue(connection=conn)
 
 @receiver(post_save, sender=CustomUser)
 def handle(sender, instance, created, **kwargs):
     if created and instance.email and not instance.is_verified:
         job = q.enqueue(send_welcome_email, instance.email)
+        # job = q.enqueue("Hi World")
 
     if instance.email and not instance.is_verified:
         job = q.enqueue(send_verify_email, instance.email, instance.verify_token)
-    print sender
-    print kwargs
-
+        # job = q.enqueue("Hi", "World")

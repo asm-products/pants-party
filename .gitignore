@@ -9,3 +9,4 @@ static/avatars/*
 .idea/
 node_modules/
 static/config.codekit
+.env

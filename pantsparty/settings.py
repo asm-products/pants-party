@@ -86,6 +86,30 @@ INSTALLED_APPS = (
 )
 
 EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+MANDRILL_API_KEY = os.environ["MANDRILL_API_KEY"]
+
+OPBEAT = { 
+    "ORGANIZATION_ID": "5ffb6078bbc54300a78b4593190be7e0",
+    "APP_ID": "a0cdfc36c7",
+    "SECRET_TOKEN": "%s" % (os.environ["OPBEAT_SECRET_TOKEN"]),
+    "DEBUG": True
+}
+
+SOSH = { 
+    "google" :{
+        "CLIENT_ID": "619194941129-08kmjd2nbt526kqmdhc5sgtkt669j2cg.apps.googleusercontent.com",
+        "CLIENT_SECRET": os.environ["SOSH_GOOGLE_SECRET"],
+        "CALLBACK_URL": "http://pants.party/auth/google/"
+    },  
+    "twitter" : { 
+        "CONSUMER_KEY": "c2WJqCMkG9M39bZcas5cid1ms",
+        "CONSUMER_SECRET": os.environ["SOSH_TWITTER_SECRET"],
+        "CALLBACK_URL": "http://pants.party/auth/twitter/"
+    },  
+    "facebook" :{
+        "CLIENT_SECRET": os.environ["SOSH_FACEBOOK_SECRET"]
+    }   
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -133,7 +157,75 @@ STATIC_URL = '/static/'
 
 SITE_ID = 1
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+    },
+    'handlers': {
+        'opbeat': {
+            'level': 'WARNING',
+            'class': 'opbeat.contrib.django.handlers.OpbeatHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'mysite': {
+            'level': 'WARNING',
+            'handlers': ['opbeat'],
+            'propagate': False,
+        },
+        'opbeat.errors': {
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+    },
+}
+
 try:
     from dev_settings import *
 except Exception, e:
-    from prod_settings import *
+    # from prod_settings import *
+    # from heroku_settings import *
+    DATABASES = { 
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'pantsparty',
+            'USER': 'root',
+            'PASSWORD': '', 
+            'HOST': '127.0.0.1',
+            'PORT': '', 
+        }   
+    }
+
+    import dj_database_url
+    DATABASES = {}
+    DATABASES['default'] =  dj_database_url.config()
+
+    # Honor the 'X-Forwarded-Proto' header for request.is_secure()
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    # Allow all host headers
+    ALLOWED_HOSTS = ['*']
+
+    # Static asset configuration
+    import os
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    STATIC_URL = '/static/'
+
+    STATICFILES_DIRS = (
+        os.path.join(BASE_DIR, 'static'),
+    )

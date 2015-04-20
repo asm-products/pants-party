@@ -1,0 +1,48 @@
+<topheader></topheader>
+
+<section id="body" class="page-section">
+    <div class="wrap container-fluid" >
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                <h3>Categories</h3>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a ui-sref="jokes">All Categories</a>
+                    </li>
+                    <li class="list-group-item" ng-repeat="category in categories" ui-sref-active="active">
+                        <a ui-sref="jokes.category({ id: category.id })">
+                            {{ category.name }}
+                        </a>
+                        <span class="badge">{{ category.num_jokes }}</span> 
+                    </li>
+                </ul>
+                <p ng-show="category_description">
+                    {{ category_description }}
+                </p>
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-6 col-xs-6">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <h1>Recent Jokes</h1>
+                    </div>
+                    <div class="col-lg-6 col-md-6 right">
+                        <a ng-show="isAuthenticated()" class="btn btn-success" 
+                            ng-click="toggleSubmit();">Add Joke</a>
+                    </div>
+                </div>
+                <div class="col-lg-12" ng-show="showSubmit">
+                    <form ng-submit="submitJoke();">
+                        <input placeholder="Your joke here" type="text" 
+                            class="input-joke-entry" ng-model="jokeModel.text" />
+                        </input>
+                    </form>
+                </div>
+                <div ng-repeat="joke in jokes">
+                    <joke joke="joke"></joke>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<bottomfooter></bottomfooter>
