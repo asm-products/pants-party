@@ -9,8 +9,10 @@ from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
+from django.db.models import F
 import json
 from django.db.models import F
 
@@ -59,6 +61,11 @@ class JokeList(JokeMixin, generics.ListCreateAPIView):
         return queryset
 
 
+class JokeCreate(generics.CreateAPIView):
+    # TODO must be implemented
+    pass
+
+
 class JokeDetail(generics.RetrieveAPIView):
     queryset = TextJoke.objects.filter(active=True)
     serializer_class = TextJokeSerializer
@@ -96,10 +103,6 @@ class PunchlineList(PunchlineMixin, generics.ListCreateAPIView):
         saver = TextJoke.objects.get(pk=self.request.data["joke_id"])
         serializer.save(user=self.request.user, joke=saver)
 
-    def pre_save(self, obj):
-        obj.user = self.request.user
-        super(PunchlineList, self).pre_save(obj)
-
     def post_save(self, obj):
         obj.user = self.request.user
         super(PunchlineList, self).post_save(obj)
@@ -123,44 +126,29 @@ class JokeVoteList(VoteMixin, generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
     def post(self, request, *args, **kwargs):
-        joke = TextJoke.objects.get(pk=request.data["joke"])
-        vote = JokeVotes()
-        try:
-            vote.user = request.user
-            vote.joke = joke
-            vote.vote = "1"
-            vote.save()
-
-            joke.score = joke.score + 1
-            joke.save()
-        except IntegrityError:
-            # If a vote for this joke by this user already exists, simply
-            # return that joke instead of creating a new one.
-            vote = JokeVotes.objects.get(user=request.user, joke=joke)
-
-        serializer = SimpleJokeVoteSerializer(vote)
-        return Response(serializer.data)
-
-
-class JokeVoteDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = JokeVotes.objects.all()
-    serializer_class = JokeVoteSerializer
-    authentication_classes = (TokenAuthentication, SessionAuthentication)
-
-    def delete(self, request, *args, **kwargs):
-        if not request.user.is_anonymous() is True:
-            # Remove the vote.  TODO, this is very shitty.
-            joke = TextJoke.objects.get(pk=kwargs["pk"])
-            vote = JokeVotes.objects.get(user=request.user, joke=joke)
-            vote.delete()
-
-            # Decrement the vote score
-            joke.score = F('score') - 1
-            joke.save()
-
-        output = {}
-        output["message"] = "Deleted"
-        return Response(json.dumps(output))
+        joke = TextJoke.objects.get(id=request.data.get('joke'))
+        if joke.user == request.user:
+            return Response({'error': 'You cannot vote on your own joke!'},
+                            status=400)
+        vote, is_created = JokeVotes.objects.get_or_create(
+            joke=joke, user=request.user,
+            defaults={'vote': request.data.get('vote', 0)})
+        message = 'Thanks'
+        joke.score = F('score') + request.data.get('vote')
+        joke.save()
+        # TODO the logic might need an update to make it less complicated!
+        if not is_created:
+            if vote.vote != request.data.get('vote'):
+                vote.vote += request.data.get('vote')
+                if vote.vote == 0:
+                    vote.delete()
+                    message = 'Bummer!'
+                else:
+                    vote.save()
+            else:
+                return Response({'error': 'You have already voted'},
+                                status=400)
+        return Response({'message': message})
 
 
 class CommentMixin(object):

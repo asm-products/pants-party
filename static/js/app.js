@@ -241,8 +241,8 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
 
                 $scope.removeHeart = function(joke) { 
                     $analytics.eventTrack("removed-heart", {joke: joke.id});
-                    payload = {"vote": 1, "joke": joke.id}
-                    $http.delete("/api/votes/" + joke.id)
+                    payload = {"vote": -1, "joke": joke.id}
+                    $http.post("/api/votes/", payload)
                         .success(function(data) {
                             joke.user_has_voted = false;
                         })
