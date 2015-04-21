@@ -10,7 +10,6 @@ from ppuser.models import CustomUser
 
 class FAQTestCase(TestCase):
     def setUp(self):
-        CustomUser.objects.create(username='kaveh')
         self.creation_date = timezone.now()
         self.subscription1 = Subscription.objects.create(
             email='user1@example.com')
