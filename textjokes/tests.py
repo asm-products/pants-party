@@ -4,16 +4,13 @@ from rest_framework.test import APIClient
 
 from ppuser.models import CustomUser
 from .models import TextJoke, TextPunchline, JokeVotes
+from rest_framework.authtoken.models import Token
 
 
 class JokesTestCase(TestCase):
-
     def setUp(self):
-        self.user1 = CustomUser.objects.create(username='user1',
-                                               password='secret1')
-        self.user2 = CustomUser.objects.create(username='user2',
-                                               password='secret2')
-
+        self.user1 = CustomUser.objects.create(username='user1', password='secret1')
+        self.user2 = CustomUser.objects.create(username='user2', password='secret2')
         self.joke1 = TextJoke.objects.create(user=self.user1, text='joke1')
 
         self.punchline1 = TextPunchline.objects.create(
@@ -27,10 +24,18 @@ class JokesTestCase(TestCase):
         return client.post(url, data)
 
     def test_joke_creation_via_api(self):
+        try:
+            token = Token.objects.get(user=self.user1)
+        except Exception:
+            token = Token(user=self.user1)
+            token.save()
+
+        headers = {"Authorization": "Token %s" % (token.key)}
         data = {'user': self.user1, 'text': 'random joke'}
         client = APIClient()
-        response = client.post('/api/jokes/create/', data)
-        self.assertEquals(response.staus_code, 201)
+        client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        response = client.post('/api/jokes/', data)
+        self.assertEquals(response.status_code, 201)
 
     def test_user_cannot_vote_more_than_once(self):
         vote1 = JokeVotes.objects.create(joke=self.joke1, user=self.user1)
