@@ -12,7 +12,11 @@ class Subscription(models.Model):
     def is_confirmed(self):
         # This method has the role of old 'confirmed' field, so we just use one
         # field instead of two.
-        return bool(self.confirmed)
+        if self.confirmed:
+            return True
+        else: 
+            return False
+        # return bool(self.confirmed)
 
     def save(self, *args, **kwargs):
         if not self.uuid:
