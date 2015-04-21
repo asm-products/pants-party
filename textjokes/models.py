@@ -8,17 +8,16 @@ class TextJokeCategory(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
     slug = models.CharField(max_length=255, null=True, blank=True)
     active = models.BooleanField(default=True)
-    description = models.TextField(null=True, blank=True)
-    created = models.DateTimeField(null=True, blank=True)
+    description = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
     num_jokes = models.IntegerField(default=0)
 
     def __unicode__(self):
-        return "%s" % (self.name)
+        return self.name
 
     def save(self, *args, **kwargs):
-        if not self.created:
-            self.created = datetime.now()
-        self.slug = uuslug(self.name, instance=self)
+        if not self.slug:
+            self.slug = uuslug(self.name, instance=self)
         super(TextJokeCategory, self).save(*args, **kwargs)
 
     class Meta:
@@ -29,8 +28,8 @@ class TextJokeCategory(models.Model):
 class TextJoke(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='jokes')
     category = models.ForeignKey(TextJokeCategory, related_name='category', null=True, blank=True)
-    created = models.DateTimeField(null=True, blank=True)
-    text = models.CharField(max_length=255, null=False, blank=False)
+    created = models.DateTimeField(auto_now_add=True)
+    text = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
     responses = models.IntegerField(default=0)
     score = models.IntegerField(default=1)
@@ -45,18 +44,12 @@ class TextJoke(models.Model):
     def __unicode__(self):
         return "%s - %s" % (self.user.username, self.text)
 
-    def save(self, *args, **kwargs):
-        if not self.created:
-            self.created = datetime.now()
-
-        super(TextJoke, self).save(*args, **kwargs)
-
 
 class TextPunchline(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_punchlines')
     joke = models.ForeignKey(TextJoke, null=False, blank=False, related_name='punchlines')
-    created = models.DateTimeField(null=True, blank=True)
-    text = models.CharField(max_length=255, null=False, blank=False)
+    created = models.DateTimeField(auto_now_add=True)
+    text = models.CharField(max_length=255, blank=False)
     active = models.BooleanField(default=True)
     responses = models.IntegerField(default=0)
     score = models.IntegerField(default=1)
@@ -66,12 +59,6 @@ class TextPunchline(models.Model):
 
     def __unicode__(self):
         return "%s - %s" % (self.user.username, self.text)
-
-    def save(self, *args, **kwargs):
-        if not self.created:
-            self.created = datetime.now()
-
-        super(TextPunchline, self).save(*args, **kwargs)
 
 
 class JokeVotes(models.Model):
@@ -96,8 +83,8 @@ class TextComment(models.Model):
                              related_name='comments')
     punch_line = models.ForeignKey(TextPunchline, null=True, blank=True,
                                    related_name='comments')
-    text = models.CharField(max_length=255, null=False, blank=False)
-    created = models.DateTimeField(null=True, blank=True, auto_now_add=True)
+    text = models.CharField(max_length=255, blank=False)
+    created = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
 
     def comment_on(self):
@@ -112,4 +99,3 @@ class TextComment(models.Model):
     class Meta:
         verbose_name = "Joke Comment"
         verbose_name_plural = "Joke Comments"
-
