@@ -20,8 +20,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='subscription',
             name='confirmed',
-            field=models.DateTimeField(null=True, blank=True),
-            preserve_default=True,
+            field=models.DateTimeField(default=datetime.datetime(2015, 4, 18, 16, 20, 26, 69595, tzinfo=utc), auto_now_add=True),
+            preserve_default=False,
         ),
         migrations.AlterField(
             model_name='subscription',
