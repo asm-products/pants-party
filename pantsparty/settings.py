@@ -200,20 +200,9 @@ try:
 except Exception, e:
     # from prod_settings import *
     # from heroku_settings import *
-    DATABASES = { 
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'pantsparty',
-            'USER': 'root',
-            'PASSWORD': '', 
-            'HOST': '127.0.0.1',
-            'PORT': '', 
-        }   
-    }
-
     import dj_database_url
     DATABASES = {}
-    DATABASES['default'] =  dj_database_url.config()
+    DATABASES['default'] =  dj_database_url.config(default="mysql://root:@localhost:3306/pantsparty")
 
     # Honor the 'X-Forwarded-Proto' header for request.is_secure()
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
