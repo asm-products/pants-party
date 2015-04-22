@@ -32,6 +32,7 @@ class TextJoke(models.Model):
     text = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
     responses = models.IntegerField(default=0)
+    comment_count = models.IntegerField(default=0)
     score = models.IntegerField(default=1)
 
     @property
@@ -99,3 +100,29 @@ class TextComment(models.Model):
     class Meta:
         verbose_name = "Joke Comment"
         verbose_name_plural = "Joke Comments"
+
+# This is where the signal stuff belongs, I guess.
+from rq import Queue
+from redis import Redis
+from worker import conn
+from mailframework.mails import send_verify_email, send_welcome_email
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+redis_conn = Redis()
+# try: 
+    # q = Queue(connection=redis_conn)  # no args implies the default queue
+# except Exception:
+    # q = Queue(connection=conn)
+q = Queue(connection=conn)
+
+@receiver(post_save, sender=TextComment)
+def handle(sender, instance, created, **kwargs):
+    if created:
+        print "Instance"
+        if instance.joke:
+            print "This belongs to a joke"
+            print instance.joke
+        if instance.punch_line:
+            print "This belongs to a punchline"
+            print instance.punch_line
