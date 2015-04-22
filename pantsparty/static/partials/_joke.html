@@ -32,7 +32,7 @@
                     {{ joke_comment.user.username }} - {{ joke_comment.text }}
                 </p>
                 <hr ng-show="joke.comments_active" />
-                <form ng-show="joke.comments_active" ng-submit="submitComment(this, joke.id);">
+                <form ng-show="joke.comments_active" ng-submit="submitComment(this, joke);">
                     <div class="form-group">
                         <label>Comment</label>
                         <input ng-model="commentModel.text" />
