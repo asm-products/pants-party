@@ -305,7 +305,7 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                             swal("Good job!", "Your comment is submitted!", "success");
                             $scope.cjActive = null;
                             if(joke && !punchline) 
-                                joke.joke_comments = obj;
+                                joke.joke_comments.push(data);
                         })
                         .error(function(data) {
                             console.log(data);
