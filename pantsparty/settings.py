@@ -192,6 +192,10 @@ LOGGING = {
             'handlers': ['console'],
             'propagate': False,
         },
+        'textjokes': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
     },
 }
 

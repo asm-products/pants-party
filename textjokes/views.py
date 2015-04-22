@@ -16,6 +16,9 @@ from django.db.models import F
 import json
 from django.db.models import F
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 @csrf_exempt
 @api_view(('GET', 'POST', ))
@@ -165,9 +168,17 @@ class CommentMixin(object):
 
 
 class CommentList(CommentMixin, generics.ListCreateAPIView):
-    queryset = TextComment.objects.filter(active=True)
     serializer_class = TextCommentSerializer
     authentication_classes = (TokenAuthentication, SessionAuthentication)
+
+    def get_queryset(self):
+        # This allows the endpoint to work from either /api/comments/ or
+        # /api/jokes/<joke_id>/comments
+        queryset = TextComment.objects.filter(active=True)
+        if "joke" in self.kwargs:
+            joke = self.kwargs["joke"]
+            queryset = queryset.filter(joke__pk=joke)
+        return queryset
 
     def perform_create(self, serializer):
         joke_saver = TextJoke.objects.get(pk=self.request.data["joke_id"])
