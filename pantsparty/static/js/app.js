@@ -294,16 +294,18 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                     "punchline_id": null,
                     "text" : "",
                 }
-                $scope.submitComment = function(obj, joke_id, punchline_id) {
-                    $scope.commentModel.joke_id = joke_id;
-                    if (punchline_id){
-                        $scope.commentModel.punchline_id = punchline_id;
+                $scope.submitComment = function(obj, joke, punchline) {
+                    $scope.commentModel.joke_id = joke.id;
+                    if (punchline) {
+                        $scope.commentModel.punchline_id = punchline.id;
                     }
                     $http.post("/api/comments/", $scope.commentModel)
                         .success(function(data) {
                             $scope.commentModel = {};
                             swal("Good job!", "Your comment is submitted!", "success");
                             $scope.cjActive = null;
+                            if(joke && !punchline) 
+                                joke.joke_comments.push(data);
                         })
                         .error(function(data) {
                             console.log(data);
