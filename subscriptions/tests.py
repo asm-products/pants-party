@@ -11,20 +11,13 @@ from ppuser.models import CustomUser
 class FAQTestCase(TestCase):
     def setUp(self):
         self.creation_date = timezone.now()
-        self.subscription1 = Subscription.objects.create(
-            email='user1@example.com')
-        self.subscription2 = Subscription.objects.create(
-            email='user2@example.com', confirmed=timezone.now())
-        self.subscription3 = Subscription.objects.create(
-            email='user3@example.com')
+        self.subscription1 = Subscription.objects.create(email='user1@example.com')
+        self.subscription2 = Subscription.objects.create(email='user2@example.com')
+        self.subscription3 = Subscription.objects.create(email='user3@example.com')
 
     def test_duplicate_email(self):
         with self.assertRaises(IntegrityError):
             Subscription.objects.create(email='user1@example.com')
-
-    def test_confirmed(self):
-        self.assertFalse(self.subscription1.is_confirmed)
-        self.assertTrue(self.subscription2.is_confirmed)
 
     def test_subscription_via_api(self):
         client = APIClient()
