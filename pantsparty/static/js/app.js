@@ -226,6 +226,19 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
             transclude: false,
             templateUrl: "/static/partials/_joke.html",
             controller: function($scope, $http, $analytics) { 
+                $scope.getComments = function(joke) {
+                    if(joke.comments_active === true) {
+                        joke.comments_active = false;
+                    } else {
+                        $http.get("/api/jokes/" + joke.id + "/comments/")
+                            .success(function(data) { 
+                                console.log(data);
+                                joke.comments_active = true;
+                                $scope.joke_comments = data;
+                            });
+                    }
+                }
+
                 $scope.addHeart = function(joke) { 
                     $analytics.eventTrack("added-heart", {joke: joke.id});
                     payload = {"vote": 1, "joke": joke.id}
