@@ -64,7 +64,7 @@ class TextJokeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TextJoke
-        fields = ('id', 'category', 'user_has_voted', 'user', 'punchlines', 'text', 'created', 'active', 'responses', 'score', 'comments')
+        fields = ('id', 'category', 'user_has_voted', 'user', 'punchlines', 'text', 'created', 'active', 'responses', 'comment_count', 'score', 'comments', )
 
 
 class TextJokeSerializerSimple(serializers.ModelSerializer):
