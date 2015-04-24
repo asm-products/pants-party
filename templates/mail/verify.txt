@@ -1,0 +1,3 @@
+http://pants.party/#/verify/{{ VERIFY_TOKEN }}
+
+That should be in a link and stuff, but it isn't.  OH WELL.
