@@ -254,8 +254,8 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
 
                 $scope.removeHeart = function(joke) { 
                     $analytics.eventTrack("removed-heart", {joke: joke.id});
-                    payload = {"vote": 1, "joke": joke.id}
-                    $http.delete("/api/votes/" + joke.id)
+                    payload = {"vote": -1, "joke": joke.id}
+                    $http.post("/api/votes/", payload)
                         .success(function(data) {
                             joke.user_has_voted = false;
                         })
@@ -294,16 +294,22 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                     "punchline_id": null,
                     "text" : "",
                 }
-                $scope.submitComment = function(obj, joke_id, punchline_id) {
-                    $scope.commentModel.joke_id = joke_id;
-                    if (punchline_id){
-                        $scope.commentModel.punchline_id = punchline_id;
+                $scope.submitComment = function(obj, joke, punchline) {
+                    $scope.commentModel.joke_id = joke.id;
+                    if (punchline) {
+                        $scope.commentModel.punchline_id = punchline.id;
                     }
                     $http.post("/api/comments/", $scope.commentModel)
                         .success(function(data) {
                             $scope.commentModel = {};
                             swal("Good job!", "Your comment is submitted!", "success");
                             $scope.cjActive = null;
+                            if(joke && !punchline) {
+                                if(joke.joke_comments)
+                                    joke.joke_comments.push(data);
+                                else
+                                    joke.joke_comments = data;
+                            }
                         })
                         .error(function(data) {
                             console.log(data);

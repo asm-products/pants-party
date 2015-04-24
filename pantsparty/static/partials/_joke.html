@@ -19,8 +19,8 @@
                 <span class="category-article">in</span>
                 <span class="category"><a ui-sref="jokes.category({ id: joke.category.id })" analytics-on="click" analytics-event="category.{{ category.id }}">{{ joke.category.name }}</a></span>
                 <span class="right small">
-                    <span>{{ joke.punchlines.length }} punchlines &middot;</span> 
-                    <span><a href="javascript:;" ng-click="getComments(joke);">{{ joke.comment_count }} comments</a> &middot;</span> 
+                    <span>{{ joke.punchlines.length }} <span class="glyphicon glyphicon-asterisk"></span> &middot;</span> 
+                    <span><a href="javascript:;" ng-click="getComments(joke);">{{ joke.comment_count }} <span class="glyphicon glyphicon-comment"></span></a> &middot;</span> 
                     <span am-time-ago="joke.created"></span>
                 </span>
             </p>
@@ -31,8 +31,8 @@
                     <br />
                     {{ joke_comment.user.username }} - {{ joke_comment.text }}
                 </p>
-                <hr />
-                <form ng-show="joke.comments_active" ng-submit="submitComment(this, joke.id);">
+                <hr ng-show="joke.comments_active" />
+                <form ng-show="joke.comments_active" ng-submit="submitComment(this, joke);">
                     <div class="form-group">
                         <label>Comment</label>
                         <input ng-model="commentModel.text" />
