@@ -12,14 +12,26 @@
                     <span ng-hide="isAuthenticated()">
                         <li class="login-link"><a class="login-link" analytics-on="click" ui-sref="login">Login</a></li>
                     </span>
-                    <span ng-hide="!isAuthenticated()">
-                        <li>
-                            <a href="javascript:;" ng-click="logout();" analytics-on="click">
-                                <img ng-show="avatar" style="max-height: 48px; margin-top:-16px; border: 0; padding: 2px; margin: 0; float: left; position: absolute; top: -12px; right: -48px;" class="img-responsive img-thumbnail img-circle" src="{{ avatar }}" />
-                                Log Out
-                            </a>
+                        <li class="dropdown">
+                            <a ng-click="doExpand();" href="#"><img ng-show="avatar" style="max-height: 48px; margin-top:-16px; border: 0; padding: 2px; margin: 0; float: left; position: absolute; top: -12px; right: -48px;" class="img-responsive img-thumbnail img-circle" src="/static/images/anonymous.png">Manage <b>...</b></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#">View profile</a>
+                                </li>
+                                <li>
+                                    <a href="#">Edit profile</a>
+                                </li>
+                                <li>
+                                    <a href="#">Settings</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;" ng-click="logout();" analytics-on="click"><span class="glyphicon glyphicon-log-out"></span> Log Out</a>
+                                </li>
+                            </ul>
                         </li>
-                    </span>
+                        <!--li>
+                            <a href="javascript:;" ng-click="logout();" analytics-on="click"><img ng-show="avatar" style="max-height: 48px; margin-top:-16px; border: 0; padding: 2px; margin: 0; float: left; position: absolute; top: -12px; right: -48px;" class="img-responsive img-thumbnail img-circle" src="{{ avatar }}" />Log Out</a>
+                        </li-->
                     <li>{{ isAuthenticated }}</li>
                 </ul>
             </div>
