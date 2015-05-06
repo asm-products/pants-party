@@ -160,6 +160,23 @@ angular.module('PantsParty', ['ui.router', 'ngCookies', 'satellizer', 'angularMo
                     return $auth.isAuthenticated();
                 };
 
+                $scope.doExpand = function() { 
+                    console.log("Holla!");
+                    var dropdowntoggler = document.getElementsByClassName('dropdown')[0];
+                    var dropdownmenu = document.getElementsByClassName('dropdown-menu')[0];
+                    var htmlTagForClicksOutside = document.getElementsByTagName('html')[0];
+
+                    dropdownmenu.classList.toggle('show-dr-menu');
+                    dropdowntoggler.classList.toggle('toggled');
+
+                    htmlTagForClicksOutside.addEventListener("click", function(e){
+                        if (e.target != dropdowntoggler && e.target.parentNode != dropdowntoggler){
+                            dropdownmenu.classList.remove("show-dr-menu");
+                            dropdowntoggler.classList.remove('toggled');
+                        }
+                    });
+                };
+
                 $rootScope.$on("avatarChanged", function(event, data) { 
                     $analytics.eventTrack("changed-avatar");
                     if(localStorage.getItem("avatar") !== null) 
