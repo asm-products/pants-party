@@ -7,8 +7,11 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
 from shortuuid import uuid
 from datetime import datetime
+from mailframework.mails import send_verify_email
 
-
+def get_uuid():
+    return uuid()
+    
 class CustomUserManager(BaseUserManager):
     def _create_user(self, username, password, is_staff, is_superuser, **extra_fields):
         now = timezone.now()
@@ -30,35 +33,34 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(_('username'), max_length=254, unique=True)
     display_name = models.CharField(_('display_name'), max_length=254, null=True, blank=True)
-    email = models.EmailField(_('email address'), max_length=254)
+    email = models.EmailField(_('email address'), max_length=254, unique=True)
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=30, blank=True)
     avatar = models.URLField(_('avatar url'), max_length=255, blank=True)
     is_staff = models.BooleanField(_('staff status'), default=False, help_text=_('Designates whether the user can log into this admin site.'))
     is_active = models.BooleanField(_('active'), default=True, help_text=_('Designates whether this user should be treated as '
                                                                            'active. Unselect this instead of deleting accounts.'))
-    is_verified = models.BooleanField(_('verified'), default=False, help_text=_('Designates whether the user has been verified via an email confirmation.'))
-    verify_token = models.CharField(max_length=22, null=True, blank=True)
+    is_verified = models.DateTimeField(_('verified'), null=True, blank=True, help_text=_('Designates when the user was verified via an email'
+                                                                                            ' confirmation (null if not verified).'))
+    verify_token = models.CharField(max_length=22, default = get_uuid)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
     set_profile = models.BooleanField(_('set_profile'), default=False, help_text=('Has the user set up his profile.'))
-    verified_on = models.DateTimeField(_('verified on'), blank=True, null=True)
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
-    def save(self, *args, **kwargs):
-        if not self.verify_token:
-            self.verify_token = uuid()
-
-        if self.verify_token and not self.verified_on:
-            self.verified_on = datetime.now()
-
-        return super(CustomUser, self).save(*args, **kwargs)
-
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
+
+    def save(self, *args, **kwargs):
+        if not self.pk: #user was just created
+            super(CustomUser, self).save(*args, **kwargs)
+            #Send the verification email after you have saved the user. We need the PK to exist.
+            send_verify_email(self)
+        else:
+            super(CustomUser, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
         return "/users/%s/" % urlquote(self.username)
