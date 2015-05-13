@@ -1,8 +1,10 @@
-from django.db import models
 from django.conf import settings
-from datetime import datetime
+from django.db import models
+
 from uuslug import uuslug
 
+
+TREND_WEIGHTS = settings.TREND_WEIGHTS
 
 class TextJokeCategory(models.Model):
     name = models.CharField(max_length=255, null=False, blank=False)
@@ -27,13 +29,17 @@ class TextJokeCategory(models.Model):
 
 class TextJoke(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='jokes')
-    category = models.ForeignKey(TextJokeCategory, related_name='category', null=True, blank=True)
+    category = models.ForeignKey(TextJokeCategory, related_name='category',
+                                 null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     text = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
     responses = models.IntegerField(default=0)
     comment_count = models.IntegerField(default=0)
     score = models.IntegerField(default=1)
+    updated = models.DateTimeField(auto_now=True)
+    trend_weight = models.DecimalField(default=0, max_digits=10,
+                                       decimal_places=1, blank=True, null=True)
 
     @property
     def user_has_voted(self):
@@ -45,15 +51,31 @@ class TextJoke(models.Model):
     def __unicode__(self):
         return "%s - %s" % (self.user.username, self.text)
 
+    def update_observation_weight(self, call_save=True):
+        self.trend_weight = \
+            TREND_WEIGHTS['punchline'] * len(self.punchlines.all()) + \
+            TREND_WEIGHTS['score'] * self.score + \
+            TREND_WEIGHTS['comment'] * len(self.comments.all()) + \
+            TREND_WEIGHTS['vote'] * len(self.joke_votes.all())
+        if call_save:
+            self.save()
+
+    def save(self, *args, **kwargs):
+        self.update_observation_weight(call_save=False)
+        super(TextJoke, self).save(*args, **kwargs)
+
 
 class TextPunchline(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_punchlines')
-    joke = models.ForeignKey(TextJoke, null=False, blank=False, related_name='punchlines')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name='user_punchlines')
+    joke = models.ForeignKey(TextJoke, null=False, blank=False,
+                             related_name='punchlines')
     created = models.DateTimeField(auto_now_add=True)
     text = models.CharField(max_length=255, blank=False)
     active = models.BooleanField(default=True)
     responses = models.IntegerField(default=0)
     score = models.IntegerField(default=1)
+    updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-id']
@@ -61,12 +83,19 @@ class TextPunchline(models.Model):
     def __unicode__(self):
         return "%s - %s" % (self.user.username, self.text)
 
+    def save(self, *args, **kwargs):
+        super(TextPunchline, self).save(*args, **kwargs)
+        self.joke.update_observation_weight()
+
 
 class JokeVotes(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user_votes')
-    joke = models.ForeignKey(TextJoke, null=False, blank=False, related_name='joke_votes')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             related_name='user_votes')
+    joke = models.ForeignKey(TextJoke, null=False, blank=False,
+                             related_name='joke_votes')
     vote = models.IntegerField(default=0)
     ip_address = models.IPAddressField(null=True, blank=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return "%s : %s" % (self.user.username, self.vote)
@@ -75,6 +104,10 @@ class JokeVotes(models.Model):
         unique_together = (("user", "joke"),)
         verbose_name = "Joke Vote"
         verbose_name_plural = "Joke Votes"
+
+    def save(self, *args, **kwargs):
+        super(JokeVotes, self).save(*args, **kwargs)
+        self.joke.update_observation_weight()
 
 
 class TextComment(models.Model):
@@ -87,56 +120,36 @@ class TextComment(models.Model):
     text = models.CharField(max_length=255, blank=False)
     created = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def comment_on(self):
         if self.punch_line:
             return 'punchline'
         else:
             return 'joke'
-    
+
     def __unicode__(self):
         return self.user.username + ' commented: ' + self.text
-        
+
     class Meta:
         verbose_name = "Joke Comment"
         verbose_name_plural = "Joke Comments"
+
+    def save(self, *args, **kwargs):
+        super(TextComment, self).save(*args, **kwargs)
+        self.joke.update_observation_weight()
 
 # This is where the signal stuff belongs, I guess.
 from rq import Queue
 from redis import Redis
 from worker import conn
 from mailframework.mails import send_verify_email, send_welcome_email
-from django.db.models.signals import post_save, pre_delete
-from django.dispatch import receiver
 
 redis_conn = Redis()
 # try: 
-    # q = Queue(connection=redis_conn)  # no args implies the default queue
+# q = Queue(connection=redis_conn)  # no args implies the default queue
 # except Exception:
-    # q = Queue(connection=conn)
+# q = Queue(connection=conn)
 q = Queue(connection=conn)
 
-@receiver(post_save, sender=TextComment)
-def handle_save(sender, instance, created, **kwargs):
-    if created:
-        if instance.joke:
-            try:
-                instance.joke.comment_count = instance.joke.comment_count + 1
-                instance.joke.save()
-            except Exception, e:
-                print str(e)
-        if instance.punch_line:
-            # TODO - Implement counter for punchline
-            print "This belongs to a punchline"
-            print instance.punch_line
 
-@receiver(pre_delete, sender=TextComment)
-def handle_delete(sender, instance, **kwargs):
-    if instance.joke:
-        if not instance.joke.comment_count == 0:
-            instance.joke.comment_count = instance.joke.comment_count - 1
-            instance.joke.save()
-    if instance.punch_line:
-        # TODO - Implement counter for punchline
-        print "This belongs to a punchline"
-        print instance.punch_line
