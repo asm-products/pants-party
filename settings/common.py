@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from os.path import join, dirname
+import os
 
 from configurations import Configuration, values
 
-BASE_DIR = dirname(dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 class Common(Configuration):
@@ -42,6 +42,7 @@ class Common(Configuration):
         'sosh',
         'subscriptions',
         'textjokes',
+        'trend',
         # 'testresp',
     )
 
@@ -80,7 +81,7 @@ class Common(Configuration):
     # FIXTURE CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-FIXTURE_DIRS
     FIXTURE_DIRS = (
-        join(BASE_DIR, 'fixtures'),
+        os.path.join(BASE_DIR, 'fixtures'),
     )
     # END FIXTURE CONFIGURATION
 
@@ -152,7 +153,7 @@ class Common(Configuration):
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
     TEMPLATE_DIRS = (
-        join(BASE_DIR, 'templates'),
+        os.path.join(BASE_DIR, 'templates'),
     )
 
     TEMPLATE_LOADERS = (
@@ -162,14 +163,14 @@ class Common(Configuration):
 
     # STATIC FILE CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-    STATIC_ROOT = join(dirname(BASE_DIR), 'staticfiles')
+    STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'staticfiles')
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
     STATIC_URL = '/static/'
 
     # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
     STATICFILES_DIRS = (
-        join(BASE_DIR, 'static'),
+        os.path.join(BASE_DIR, 'static'),
     )
 
     # See: https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
@@ -181,7 +182,7 @@ class Common(Configuration):
 
     # MEDIA CONFIGURATION
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-root
-    MEDIA_ROOT = join(BASE_DIR, 'media')
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#media-url
     MEDIA_URL = '/media/'
@@ -270,6 +271,21 @@ class Common(Configuration):
     # cors
     # ====
     CORS_ORIGIN_ALLOW_ALL = True
+
+    # ======================
+    # Decay rates for trends
+    # ======================
+    # A dictionary in form of {number_of_days: description}
+    # Use 0 for AllTime!
+    TREND_PERIODS = {0: 'All time', 1: 'Daily', 7: 'Weekly', 30: 'Monthly'}
+    # Number of top trending jokes to return for each category of trend
+    TOP_TRENDS_NUMBER = 10
+    TREND_WEIGHTS = {
+        'punchline': float(os.environ.get('PUNCHLINE_WEIGHT', 1)),
+        'score': float(os.environ.get('SCORE_WEIGHT', 1)),
+        'comment': float(os.environ.get('COMMENT_WEIGHT', 1)),
+        'vote': float(os.environ.get('VOTE_WEIGHT', 1)),
+    }
 
     @classmethod
     def post_setup(cls):
